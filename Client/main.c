@@ -16,18 +16,7 @@ int main(int argc, char *argv[]) {
             printf("Connected to '%s' on port: %d \n", control->conn->ip_address, control->conn->port);
 
             if (Connection_initialise(control->conn)) {
-                char cc[1000];
-                while (1) {
-                    printf("Enter Character : ");
-                    scanf("%s" , cc);
-                    puts(cc);
 
-                    Connection_send(control->conn, cc);
-
-                    if (strcmp(cc, "exit") == 0) {
-                        break;
-                    }
-                }
             } else {
                 puts("Failed to start thread");
             }

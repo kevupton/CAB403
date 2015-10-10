@@ -12,7 +12,7 @@
 typedef struct Connection Connection;
 
 typedef struct {
-    GameList *games;
+    Game *game;
     Connection *conn;
 } Control;
 

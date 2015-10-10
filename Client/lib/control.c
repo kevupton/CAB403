@@ -8,7 +8,7 @@
 
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));
-    c->games = newGameList();
     c->conn = newConnection(argv[1], argv[2]);
+    c->game = newGame(100);
     return c;
 }
