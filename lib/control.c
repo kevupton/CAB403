@@ -3,3 +3,10 @@
 //
 
 #include "control.h"
+
+
+Control *newControl() {
+    Control *c = malloc(sizeof(Control));
+    c->games = newGameList();
+    return c;
+}

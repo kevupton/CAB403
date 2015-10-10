@@ -9,7 +9,9 @@
 #include "game.h"
 
 typedef struct {
-    static GameList games;
+    GameList *games;
 } Control;
+
+Control *newControl();
 
 #endif //HANGMAN_CONTROL_H
