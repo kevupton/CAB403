@@ -11,13 +11,15 @@ int main() {
     puts("Started");
 
     Game *g1 = newGame(100);
-
     puts("HERE");
 
-    GameList_add(&control->games, 10, g1);
-    g1 = GameList_get(&control->games, 10);
+    GameList_add(control->games, 10, g1);
+    g1 = GameList_get(control->games, 10);
 
-    //puts(g1->id + "");
+    char string[32];
+    sprintf(string, "%d", g1->id);
+    puts(string);
+
     puts("\nTEST");
     return 0;
 }
