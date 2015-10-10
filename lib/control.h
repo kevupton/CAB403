@@ -7,11 +7,15 @@
 
 #include "gamelist.h"
 #include "game.h"
+#include "connection.h"
+
+typedef struct Connection Connection;
 
 typedef struct {
     GameList *games;
+    Connection *conn;
 } Control;
 
-Control *newControl();
+Control *newControl(char *argv[]);
 
 #endif //HANGMAN_CONTROL_H
