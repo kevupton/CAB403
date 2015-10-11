@@ -3,20 +3,19 @@
 //
 
 #include <stdio.h>
-#include <string.h>
 #include "lib/control.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         puts("Client requires an Ip address followed by a Port number");
     } else {
-        Control *control = newControl(argv);
+        control = newControl(argv);
         if (control->conn != NULL) {
-            puts("Success!");
-            printf("Connected to '%s' on port: %d \n", control->conn->ip_address, control->conn->port);
+//            puts("Success!");
+//            printf("Connected to '%s' on port: %d \n", control->conn->ip_address, control->conn->port);
 
-            if (Connection_initialise(control->conn)) {
-
+            if (Connection_initialise()) {
+                Game_initialise();
             } else {
                 puts("Failed to start thread");
             }

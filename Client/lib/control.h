@@ -10,12 +10,15 @@
 #include "connection.h"
 
 typedef struct Connection Connection;
-
-typedef struct {
+typedef struct Game Game;
+typedef struct Control {
     Game *game;
     Connection *conn;
 } Control;
 
 Control *newControl(char *argv[]);
+void Control_exit();
+
+Control *control;
 
 #endif //HANGMAN_CONTROL_H

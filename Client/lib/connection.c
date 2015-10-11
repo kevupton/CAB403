@@ -11,6 +11,9 @@
 #include <pthread.h>
 #include "connection.h"
 
+static const int DATA_LENGTH = 5;
+static const int DATA_SIZE = 10;
+
 Connection *newConnection(char *ip, char *port) {
     Connection *c = malloc(sizeof(Connection));
     c->ip_address = ip;
@@ -22,7 +25,6 @@ Connection *newConnection(char *ip, char *port) {
     }
 
     struct sockaddr_in server;
-    char message[1000] , server_reply[2000];
 
     //Create socket
     c->_sock = socket(AF_INET , SOCK_STREAM , 0);
@@ -31,7 +33,7 @@ Connection *newConnection(char *ip, char *port) {
         printf("Could not create socket");
         return NULL;
     }
-    puts("Socket created");
+    //puts("Socket created");
 
     server.sin_addr.s_addr = inet_addr(c->ip_address);
     server.sin_family = AF_INET;
@@ -47,38 +49,71 @@ Connection *newConnection(char *ip, char *port) {
     return c;
 }
 
-int Connection_initialise(Connection *c) {
-    if (pthread_create(&c->listener, NULL, Connection_listen, c)) {
+int Connection_initialise() {
+    if (pthread_create(&control->conn->listener, NULL, Connection_listen, control->conn)) {
         return 0;
     }
     return 1;
 }
 
-void Connection_close(Connection *c) {
-    close(c->_sock);
+void Connection_close() {
+    close(control->conn->_sock);
+    control->conn = NULL;
 }
 
-void *Connection_listen(Connection *c) {
-    char server_reply[2000];
-
+void *Connection_listen() {
     //begin the thread
     //keep communicating with server
+    int n = 0;
+    char server_reply[2000];
+
     while(1)
     {
         //Receive a reply from the server
-        if( recv(c->_sock , server_reply , 2000 , 0) < 0)
+        if((n = recv(control->conn->_sock , server_reply , 2000 , 0)) <= 0)
         {
             puts("Connection Closed");
-            //end the game
+            Connection_close();
+            Control_exit();
             break;
         }
-
-        puts("Server reply :");
-        puts(server_reply);
+        if (n != 0) {
+            //puts("Server reply :");
+            //puts(server_reply);
+        }
     }
 }
 
-int Connection_send(Connection *c, char *msg) {
+int Connection_send(char *msg) {
     //Send some data
-    return send(c->_sock , msg , strlen(msg) , 0);
+    return send(control->conn->_sock , msg , strlen(msg) , 0);
+}
+
+int Connection_login(char *username, char *password) {
+    char *data[2] = {username, password};
+    Connection_send(_prepare_msg("login", data, 2));
+}
+
+char *_prepare_msg(char *route, char **data, int len) {
+    int i;
+    char *to_send[DATA_LENGTH + 1];
+
+    for (i = 0; i < DATA_LENGTH + 1; i++) {
+        to_send[i] = malloc(DATA_SIZE * sizeof(char));
+    }
+    strncpy(to_send[0], route, sizeof(route));
+
+    for (i = 0; i < len && i < DATA_LENGTH; i += 1) {
+        strncpy(to_send[i + 1], data[i], sizeof(data[i]));
+    }
+
+    char str[(DATA_LENGTH + 1) * DATA_SIZE];
+    int z;
+    for (i = 0; i < DATA_LENGTH + 1; i += 1) {
+        for (z = 0; z < DATA_SIZE; z += 1) {
+            str[(i * DATA_SIZE) + z] = to_send[i][z];
+        }
+    }
+
+    return str;
 }

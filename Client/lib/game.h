@@ -8,7 +8,8 @@
 #include <stdlib.h>
 #include "control.h"
 
-typedef struct {
+typedef struct Control Control;
+typedef struct Game {
     int id;
     char *guesses;
     int nb_left;
@@ -16,7 +17,10 @@ typedef struct {
 } Game;
 
 Game *newGame(int id);
-void Game_initialise(Control *c);
-void Game_board(Game *g);
+void Game_initialise();
+void Game_board();
+void Game_welcome();
+int Game_login();
+int _valid_login(char *username, char *password);
 
 #endif //HANGMAN_GAME_H

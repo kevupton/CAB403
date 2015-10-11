@@ -9,6 +9,10 @@
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));
     c->conn = newConnection(argv[1], argv[2]);
-    c->game = newGame(100);
+    c->game = NULL;
     return c;
+}
+
+void Control_exit() {
+
 }
