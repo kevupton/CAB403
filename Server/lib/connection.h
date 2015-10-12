@@ -8,7 +8,6 @@
 #include "control.h"
 
 static const int DATA_LENGTH;
-static const int DATA_SIZE;
 
 typedef struct Connection {
     int port;
@@ -22,7 +21,6 @@ void Connection_close(Connection *c);
 void *Connection_listen(Connection *c);
 int Connection_send(Connection *c, char *msg);
 void *Connection_handler(void *socket_desc);
-char **_read_msg(char *msg, int len);
 char *_prepare_msg(int len, ...);
 
 #endif //HANGMAN_CONNECTION_H

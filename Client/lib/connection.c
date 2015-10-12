@@ -12,8 +12,7 @@
 #include <stdarg.h>
 #include "connection.h"
 
-static const int DATA_LENGTH = 30;
-static const int DATA_SIZE = 10;
+static const int DATA_LENGTH = 1000;
 
 Connection *newConnection(char *ip, char *port) {
     Connection *c = malloc(sizeof(Connection));
@@ -65,16 +64,19 @@ void Connection_close() {
 void *Connection_listen() {
     //begin the thread
     //keep communicating with server
-    int n = 0;
-    char server_reply[2000];
+    int n = 0, nb_words;
+    char server_reply[DATA_LENGTH];
 
     while(1)
     {
-        memset(server_reply, 0, 2000);
+        memset(server_reply, 0, DATA_LENGTH);
 
         //Receive a reply from the server
-        if((n = recv(control->conn->_sock , server_reply , 2000 , 0)) <= 0)
+        if((n = recv(control->conn->_sock , server_reply , DATA_LENGTH , 0)) <= 0)
         {
+            char **data = _get_words(server_reply, &nb_words);
+            Event_run(data, nb_words);
+            /* TODO */
             puts("Connection Closed");
             Connection_close();
             Control_exit();

@@ -90,7 +90,7 @@ void *Connection_handler(void *socket_desc)
 {
     //Get the socket descriptor
     int sock = *(int*)socket_desc;
-    int read_size, size = (DATA_LENGTH + 1) * DATA_SIZE;
+    int read_size, nb_words;
     char client_message[60];
 
     //Send some messages to the client
@@ -101,11 +101,10 @@ void *Connection_handler(void *socket_desc)
 //    write(sock , message , strlen(message));
 
     //Receive a message from client
-    while( (read_size = recv(sock , client_message , size , 0)) > 0 )
+    while( (read_size = recv(sock , client_message , DATA_LENGTH , 0)) > 0 )
     {
-        char **data = _read_msg(client_message, size);
-        int len = size/DATA_SIZE;
-        Event_run(data, len);
+        char **data = _get_words(client_message, &nb_words);
+        Event_run(data, nb_words);
 
         //Send the message back to client
         //write(sock , client_message , strlen(client_message));
@@ -157,28 +156,28 @@ void *Connection_listen(Connection *c) {
     }
 }
 
-char **_read_msg(char *msg, int len) {
-    int i, nb = len/DATA_SIZE, z, y;
-    char **arr = malloc(nb * sizeof(char*));
-
-    for (i = 0; i < nb; i += 1) {
-        y = i * DATA_SIZE;
-        arr[i] = malloc(DATA_SIZE * sizeof(char));
-        for (z = 0; z < DATA_SIZE && (z + y) < len; z += 1) {
-            arr[i][z] = msg[z + y];
-        }
-
-        for (z = DATA_SIZE - 1; z >= 0; z -= 1) {
-            if (arr[i][z] == ' ' || arr[i][z] == '\n' || arr[i][z] == '\t') {
-                arr[i][z] = '\0';
-            } else {
-                break;
-            }
-        }
-    }
-
-    return arr;
-}
+//char **_read_msg(char *msg, int len) {
+//    int i, nb = len/DATA_SIZE, z, y;
+//    char **arr = malloc(nb * sizeof(char*));
+//
+//    for (i = 0; i < nb; i += 1) {
+//        y = i * DATA_SIZE;
+//        arr[i] = malloc(DATA_SIZE * sizeof(char));
+//        for (z = 0; z < DATA_SIZE && (z + y) < len; z += 1) {
+//            arr[i][z] = msg[z + y];
+//        }
+//
+//        for (z = DATA_SIZE - 1; z >= 0; z -= 1) {
+//            if (arr[i][z] == ' ' || arr[i][z] == '\n' || arr[i][z] == '\t') {
+//                arr[i][z] = '\0';
+//            } else {
+//                break;
+//            }
+//        }
+//    }
+//
+//    return arr;
+//}
 
 int Connection_send(Connection *c, char *msg) {
     //Send some data
