@@ -10,8 +10,8 @@ int main(int argc, char *argv[]) {
         puts("Server requires a Port number");
     } else {
         control = newControl(argv);
-
-        _prepare_msg(4, "login", "hello", "my", "name");
+        int total;
+        char **words = _get_words(_prepare_msg(4, "login", "hello", "my", "name"), &total);
 
 //
 //        int toget = 11;

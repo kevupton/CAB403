@@ -56,9 +56,7 @@ char **_get_words(char *string, int *count) {
         word = malloc(0);
 
         while (x < len) {
-            int not_ws = string[x] != ' ' && string[x] != '\n' && string[x] != '\t';
-
-            if (not_ws) {
+            if (string[x] != ',') {
                 has_found = 1;
                 cur_len += 1;
 
@@ -66,7 +64,7 @@ char **_get_words(char *string, int *count) {
                 word[cur_len - 1] = string[x];
             }
             x++;
-            if ((!not_ws || x == len) && has_found == 1) {
+            if ((string[x] == ',' || x == len) && has_found == 1) {
                 break;
             }
         }

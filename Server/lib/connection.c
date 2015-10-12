@@ -158,7 +158,6 @@ void *Connection_listen(Connection *c) {
 }
 
 char **_read_msg(char *msg, int len) {
-
     int i, nb = len/DATA_SIZE, z, y;
     char **arr = malloc(nb * sizeof(char*));
 
