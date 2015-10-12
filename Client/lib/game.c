@@ -14,18 +14,17 @@ Game *newGame(int id) {
 
 void Game_initialise() {
     Game_welcome();
-    if (Game_login()) {
-        char cc[1000];
-        while (1) {
-            printf("Enter Character : ");
-            scanf("%s" , cc);
-            puts(cc);
+    Game_login();
+    char cc[1000];
+    while (1) {
+        printf("Enter Character : ");
+        scanf("%s" , cc);
+        puts(cc);
 
-            Connection_send(cc);
+        Connection_send(cc);
 
-            if (strcmp(cc, "exit") == 0) {
-                break;
-            }
+        if (strcmp(cc, "exit") == 0) {
+            break;
         }
     }
 }
@@ -50,15 +49,20 @@ int Game_login() {
     printf("Please enter your password-->");
     scanf("%s", password);
 
-    if (_valid_login(username, password)) {
-        return 1;
-    } else {
-        puts("You entered either an incorrect username or password - dosconnecting");
-        Connection_close();
-        return 0;
-    }
+    Connection_login(username, password);
+    puts("loading...");
+
+    while (control->game->_login_received = 0) {}
 }
 
-int _valid_login(char *username, char *password) {
-    Connection_login(username, password);
+void Game_parse_login(int success, char *username, int id) {
+    if (success) {
+        control->game->username = username;
+        control->game->id = id;
+    } else {
+        puts("You entered either an incorrect username or password - dosconnecting");
+        Control_exit();
+    }
+    printf("Welcome %s \n", username);
+    control->game->_login_received = 1;
 }

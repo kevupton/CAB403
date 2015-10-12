@@ -7,17 +7,22 @@
 
 #include "control.h"
 
+static const int DATA_LENGTH;
+static const int DATA_SIZE;
+
 typedef struct Connection {
-    char *ip_address;
     int port;
     int _sock;
-    pthread_t listener;
+    pthread_t *active_threads;
 } Connection;
 
-Connection *newConnection(char *ip, char *port);
+Connection *newConnection(char *port);
 int Connection_initialise(Connection *c);
 void Connection_close(Connection *c);
 void *Connection_listen(Connection *c);
 int Connection_send(Connection *c, char *msg);
+void *Connection_handler(void *socket_desc);
+char **_read_msg(char *msg, int len);
+char *_parse_data(char *route, char **data, int len);
 
 #endif //HANGMAN_CONNECTION_H

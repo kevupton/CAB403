@@ -8,14 +8,17 @@
 #include "gamelist.h"
 #include "game.h"
 #include "connection.h"
+#include "event.h"
 
 typedef struct Connection Connection;
+typedef struct Game Game;
 
-typedef struct {
+typedef struct Control {
     Game *game;
     Connection *conn;
 } Control;
 
 Control *newControl(char *argv[]);
+Control *control;
 
 #endif //HANGMAN_CONTROL_H

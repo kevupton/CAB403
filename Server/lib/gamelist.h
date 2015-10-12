@@ -7,6 +7,8 @@
 
 #include "game.h"
 
+typedef struct Game Game;
+
 typedef struct GameList {
     int count;
     int *ids;

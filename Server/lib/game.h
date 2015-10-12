@@ -8,7 +8,9 @@
 #include <stdlib.h>
 #include "control.h"
 
-typedef struct {
+typedef struct Control Control;
+
+typedef struct Game {
     int id;
     char *guesses;
     int nb_left;

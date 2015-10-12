@@ -59,11 +59,11 @@ Game *GameList_get(GameList *g, int id) {
 
 GameList *newGameList() {
     GameList *gl = malloc(sizeof(GameList));
-    Game games[0];
+    Game *games[0];
     int ids[0];
 
-    gl->games = &games;
-    gl->ids = &ids;
+    gl->games = games;
+    gl->ids = ids;
     gl->count = 0;
 
     return gl;

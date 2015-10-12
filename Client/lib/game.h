@@ -11,9 +11,11 @@
 typedef struct Control Control;
 typedef struct Game {
     int id;
+    char *username;
     char *guesses;
     int nb_left;
     char **word;
+    volatile int _login_received;
 } Game;
 
 Game *newGame(int id);
@@ -21,6 +23,6 @@ void Game_initialise();
 void Game_board();
 void Game_welcome();
 int Game_login();
-int _valid_login(char *username, char *password);
+void Game_parse_login(int success, char *username, int id);
 
 #endif //HANGMAN_GAME_H

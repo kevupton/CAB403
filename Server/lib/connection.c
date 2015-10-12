@@ -11,46 +11,125 @@
 #include <pthread.h>
 #include "connection.h"
 
-Connection *newConnection(char *ip, char *port) {
-    Connection *c = malloc(sizeof(Connection));
-    c->ip_address = ip;
-    c->port = atoi(port);
+static const int DATA_LENGTH = 5;
+static const int DATA_SIZE = 10;
 
-    if (c->port == 0) {
+Connection *newConnection(char *port) {
+    Connection *conn = malloc(sizeof(Connection));
+
+    int socket_desc , client_sock , c , *new_sock;
+    struct sockaddr_in server , client;
+
+    conn->port = atoi(port);
+
+    if (conn->port == 0) {
         puts("Invalid Port.");
         return NULL;
     }
 
-    struct sockaddr_in server;
-    char message[1000] , server_reply[2000];
-
     //Create socket
-    c->_sock = socket(AF_INET , SOCK_STREAM , 0);
-    if (c->_sock == -1)
+    socket_desc = socket(AF_INET , SOCK_STREAM , 0);
+    if (socket_desc == -1)
     {
         printf("Could not create socket");
-        return NULL;
     }
     puts("Socket created");
 
-    server.sin_addr.s_addr = inet_addr(c->ip_address);
+    //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
-    server.sin_port = htons( c->port ); //1134
+    server.sin_addr.s_addr = INADDR_ANY;
+    server.sin_port = htons( conn->port );
 
-    //Connect to remote server
-    if (connect(c->_sock , (struct sockaddr *)&server , sizeof(server)) < 0)
+    //Bind
+    if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
     {
-        perror("connect failed. Error");
+        //print the error message
+        perror("bind failed. Error");
+        return NULL;
+    }
+    puts("bind done");
+
+    //Listen
+    listen(socket_desc , 3);
+
+    //Accept and incoming connection
+    puts("Waiting for incoming connections...");
+    c = sizeof(struct sockaddr_in);
+    while( (client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
+    {
+        puts("Connection accepted");
+
+        pthread_t sniffer_thread;
+        new_sock = malloc(1);
+        *new_sock = client_sock;
+
+        if( pthread_create( &sniffer_thread , NULL ,  Connection_handler , (void*) new_sock) < 0)
+        {
+            perror("could not create thread");
+            return NULL;
+        }
+
+        //Now join the thread , so that we dont terminate before the thread
+        //pthread_join( sniffer_thread , NULL);
+        puts("Handler assigned");
+    }
+
+    if (client_sock < 0)
+    {
+        perror("accept failed");
         return NULL;
     }
 
-    return c;
+    return conn;
+}
+
+/*
+ * This will handle connection for each client
+ * */
+void *Connection_handler(void *socket_desc)
+{
+    //Get the socket descriptor
+    int sock = *(int*)socket_desc;
+    int read_size, size = (DATA_LENGTH + 1) * DATA_SIZE;
+    char client_message[60];
+
+    //Send some messages to the client
+//    message = "\nGreetings! I am your connection handler\n";
+//    write(sock , message , strlen(message));
+//
+//    message = "Now type something and i shall repeat what you type \n";
+//    write(sock , message , strlen(message));
+
+    //Receive a message from client
+    while( (read_size = recv(sock , client_message , size , 0)) > 0 )
+    {
+        char **data = _read_msg(client_message, size);
+        int len = size/DATA_SIZE;
+        Event_run(data, len);
+
+        //Send the message back to client
+        //write(sock , client_message , strlen(client_message));
+    }
+
+    if(read_size == 0)
+    {
+        puts("Client disconnected");
+        fflush(stdout);
+    }
+    else if(read_size == -1)
+    {
+        perror("recv failed");
+    }
+
+    //Free the socket pointer
+    free(socket_desc);
+
+    return 0;
 }
 
 int Connection_initialise(Connection *c) {
-    if (pthread_create(&c->listener, NULL, Connection_listen, c)) {
-        return 0;
-    }
+
+
     return 1;
 }
 
@@ -78,7 +157,35 @@ void *Connection_listen(Connection *c) {
     }
 }
 
+char **_read_msg(char *msg, int len) {
+
+    int i, nb = len/DATA_SIZE, z, y;
+    char **arr = malloc(nb * sizeof(char*));
+
+    for (i = 0; i < nb; i += 1) {
+        y = i * DATA_SIZE;
+        arr[i] = malloc(DATA_SIZE * sizeof(char));
+        for (z = 0; z < DATA_SIZE && (z + y) < len; z += 1) {
+            arr[i][z] = msg[z + y];
+        }
+
+        for (z = DATA_SIZE - 1; z >= 0; z -= 1) {
+            if (arr[i][z] == ' ' || arr[i][z] == '\n' || arr[i][z] == '\t') {
+                arr[i][z] = '\0';
+            } else {
+                break;
+            }
+        }
+    }
+
+    return arr;
+}
+
 int Connection_send(Connection *c, char *msg) {
     //Send some data
     return send(c->_sock , msg , strlen(msg) , 0);
+}
+
+char *_parse_data(char *route, char **data, int len) {
+    
 }

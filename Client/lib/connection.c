@@ -69,6 +69,8 @@ void *Connection_listen() {
 
     while(1)
     {
+        memset(server_reply, 0, 2000);
+
         //Receive a reply from the server
         if((n = recv(control->conn->_sock , server_reply , 2000 , 0)) <= 0)
         {
@@ -78,8 +80,8 @@ void *Connection_listen() {
             break;
         }
         if (n != 0) {
-            //puts("Server reply :");
-            //puts(server_reply);
+            puts("Server reply :");
+            puts(server_reply);
         }
     }
 }
@@ -107,11 +109,11 @@ char *_prepare_msg(char *route, char **data, int len) {
         strncpy(to_send[i + 1], data[i], sizeof(data[i]));
     }
 
-    char str[(DATA_LENGTH + 1) * DATA_SIZE];
+    char *str = malloc(((DATA_LENGTH + 1) * DATA_SIZE) * sizeof(char));
     int z;
     for (i = 0; i < DATA_LENGTH + 1; i += 1) {
         for (z = 0; z < DATA_SIZE; z += 1) {
-            str[(i * DATA_SIZE) + z] = to_send[i][z];
+            str[(i * DATA_SIZE) + z] = to_send[i][z] != '\0'? to_send[i][z]: ' ';
         }
     }
 
