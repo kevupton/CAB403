@@ -17,7 +17,7 @@ Leaderboard *newLeaderboard(int start_from, int count) {
     int i;
     for (i = 0; i < count && (i + start_from) < control->userList->count; i++) {
         User *u = control->userList->users[i + start_from];
-        if (u->played > 0) {
+        if (u->played >= 0) {
             l->names[i] = u->username;
             l->wins[i] = u->won;
             l->played[i] = u->played;
@@ -71,7 +71,9 @@ int _get_score_pos(const int high_pos, const int low_pos, const int score) {
 }
 
 void _update_user(User *user) {
-
+    int pos = _get_score_pos(0, control->userList->count - 1, user->won);
+    printf("pos = %d\n", pos);
+    UserList_move_user(user, pos);
 }
 
 //void **Leaderboard_get(int start_from, int total) {
@@ -92,6 +94,3 @@ void _update_user(User *user) {
 //    return arr;
 //}
 
-int _get_user_score(char *username) {
-    for
-}

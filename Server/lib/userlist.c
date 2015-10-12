@@ -8,8 +8,8 @@
 #include "userlist.h"
 
 void UserList_add(User *user) {
-    if (UserList_index(user->username)) {
-        puts("Game already exists");
+    if (UserList_index(user->username) != -1) {
+        puts("User already exists");
     } else {
         puts("processing");
         size_t new_size = control->userList->count + 1;
