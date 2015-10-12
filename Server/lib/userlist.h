@@ -17,7 +17,9 @@ typedef struct UserList {
 
 void UserList_add(User *user);
 User * UserList_get(char *name);
-int     UserList_exists(char *name);
+int     UserList_index(char *name);
+void    UserList_move_user(User *u, int pos);
+
 UserList *newUserList();
 
 #endif //HANGMAN_LIST_H

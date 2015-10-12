@@ -10,27 +10,22 @@ int main(int argc, char *argv[]) {
         puts("Server requires a Port number");
     } else {
         control = newControl(argv);
-        Leaderboard_add("kevin", 7);
-        Leaderboard_add("kevin", 7);
-        Leaderboard_add("kevin", 7);
-        Leaderboard_add("kevin", 7);
-        Leaderboard_add("kevin", 7);
-        Leaderboard_add("kevin", 7);
-        Leaderboard_add("kevin", 7);
-        Leaderboard_add("kevin", 7);
-        Leaderboard_add("kevin", 1);
-        Leaderboard_add("kevin", 6);
 
         int toget = 11;
 
-        void **results = Leaderboard_get(0, toget);
+        Leaderboard *l = newLeaderboard(0, 10);
 
-        char **names = results[0];
-        int *scores = results[1];
         int i;
         for (i = 0; i < toget; i++) {
-            printf("%s got a score of %d\n", names[i], scores[i]);
+            printf("%s got a score of %d\n", l->names[i], l->wins[i]);
         }
+
+        UserList_add(newUser("kevin"));
+        UserList_add(newUser("kevin"));
+        UserList_add(newUser("Bob"));
+
+        printf("\n\n%d", control->userList->count);
+
     }
     return 0;
 }

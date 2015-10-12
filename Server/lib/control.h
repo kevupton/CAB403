@@ -12,13 +12,11 @@
 #include "leaderboard.h"
 
 typedef struct Connection Connection;
-typedef struct Game Game;
+typedef struct UserList UserList;
 
 typedef struct Control {
-    Game *game;
     Connection *conn;
-    Leaderboard *leaderboard;
-    UserList *users;
+    UserList *userList;
 } Control;
 
 Control *newControl(char *argv[]);

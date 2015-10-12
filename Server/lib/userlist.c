@@ -8,36 +8,36 @@
 #include "userlist.h"
 
 void UserList_add(User *user) {
-    if (UserList_exists(user->username)) {
+    if (UserList_index(user->username)) {
         puts("Game already exists");
     } else {
         puts("processing");
-        size_t new_size = control->users->count + 1;
+        size_t new_size = control->userList->count + 1;
 
-        User *new_users = realloc(control->users->users, new_size);
+        User **new_users = realloc(control->userList->users, new_size);
         if (new_users) {
-            control->users->users = new_users;
-            control->users->users[control->users->count] = user;
-            control->users->count += 1;
+            control->userList->users = new_users;
+            control->userList->users[control->userList->count] = user;
+            control->userList->count += 1;
         } else {
-            puts("Error users size");
+            puts("Error userList size");
             // deal with realloc failing because memory could not be allocated.
         }
     }
 }
 
-int UserList_exists(char *name) {
+int UserList_index(char *name) {
     int i = 0;
-    for (i; i < control->users->count; i += 1) {
-        if (equals(lowercase(control->users->users[i]->username), lowercase(name))) return i;
+    for (i; i < control->userList->count; i += 1) {
+        if (equals(lowercase(control->userList->users[i]->username), lowercase(name))) return i;
     }
     return -1;
 }
 
 User *UserList_get(char *name) {
     int index;
-    if ((index = UserList_exists(name)) != -1) {
-        return control->users->users[index];
+    if ((index = UserList_index(name)) != -1) {
+        return control->userList->users[index];
     }
 }
 
@@ -50,3 +50,20 @@ UserList *newUserList() {
     return u;
 }
 
+void UserList_move_user(User *u, int pos) {
+    int index = UserList_index(u->username), len = control->userList->count, i;
+    User **users = control->userList->users;
+
+    if (pos != index) {
+        if (pos < index) {
+            for (i = index; i > pos; i--) {
+                users[i] = users[i - 1];
+            }
+        } else {
+            for (i = index; i < pos; i++) {
+                users[i] = users[i + 1];
+            }
+        }
+        users[pos] = u;
+    }
+}

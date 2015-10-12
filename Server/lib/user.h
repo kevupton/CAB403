@@ -7,8 +7,8 @@
 
 typedef struct User {
     char *username;
-    int *won;
-    int *played;
+    int won;
+    int played;
 } User;
 
 User *newUser(char *username);
