@@ -5,10 +5,11 @@
 #ifndef HANGMAN_CONTROL_H
 #define HANGMAN_CONTROL_H
 
-#include "gamelist.h"
+#include "userlist.h"
 #include "game.h"
 #include "connection.h"
 #include "event.h"
+#include "leaderboard.h"
 
 typedef struct Connection Connection;
 typedef struct Game Game;
@@ -16,6 +17,8 @@ typedef struct Game Game;
 typedef struct Control {
     Game *game;
     Connection *conn;
+    Leaderboard *leaderboard;
+    UserList *users;
 } Control;
 
 Control *newControl(char *argv[]);

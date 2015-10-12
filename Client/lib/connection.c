@@ -11,7 +11,7 @@
 #include <pthread.h>
 #include "connection.h"
 
-static const int DATA_LENGTH = 5;
+static const int DATA_LENGTH = 30;
 static const int DATA_SIZE = 10;
 
 Connection *newConnection(char *ip, char *port) {

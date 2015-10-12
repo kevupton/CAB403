@@ -23,6 +23,6 @@ void *Connection_listen(Connection *c);
 int Connection_send(Connection *c, char *msg);
 void *Connection_handler(void *socket_desc);
 char **_read_msg(char *msg, int len);
-char *_parse_data(char *route, char **data, int len);
+char *_prepare_msg(char *route, char **data, int len);
 
 #endif //HANGMAN_CONNECTION_H

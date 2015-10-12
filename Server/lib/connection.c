@@ -11,7 +11,7 @@
 #include <pthread.h>
 #include "connection.h"
 
-static const int DATA_LENGTH = 5;
+static const int DATA_LENGTH = 30;
 static const int DATA_SIZE = 10;
 
 Connection *newConnection(char *port) {
@@ -186,6 +186,6 @@ int Connection_send(Connection *c, char *msg) {
     return send(c->_sock , msg , strlen(msg) , 0);
 }
 
-char *_parse_data(char *route, char **data, int len) {
-    
+char *_prepare_msg(char *route, char **data, int len) {
+
 }
