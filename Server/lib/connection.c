@@ -59,15 +59,7 @@ Connection *newConnection(char *port) {
     {
         puts("Connection accepted");
 
-        pthread_t sniffer_thread;
-        new_sock = malloc(1);
-        *new_sock = client_sock;
-
-        if( pthread_create( &sniffer_thread , NULL ,  Connection_handler , (void*) new_sock) < 0)
-        {
-            perror("could not create thread");
-            return NULL;
-        }
+        Instance *i = newInstance(client_sock);
 
         //Now join the thread , so that we dont terminate before the thread
         //pthread_join( sniffer_thread , NULL);
@@ -91,7 +83,7 @@ void *Connection_handler(void *socket_desc)
     //Get the socket descriptor
     int sock = *(int*)socket_desc;
     int read_size, nb_words;
-    char client_message[60];
+    char client_message[DATA_LENGTH];
 
     //Send some messages to the client
 //    message = "\nGreetings! I am your connection handler\n";
@@ -133,27 +125,7 @@ int Connection_initialise(Connection *c) {
 }
 
 void Connection_close(Connection *c) {
-    close(c->_sock);
-}
-
-void *Connection_listen(Connection *c) {
-    char server_reply[2000];
-
-    //begin the thread
-    //keep communicating with server
-    while(1)
-    {
-        //Receive a reply from the server
-        if( recv(c->_sock , server_reply , 2000 , 0) < 0)
-        {
-            puts("Connection Closed");
-            //end the game
-            break;
-        }
-
-        puts("Server reply :");
-        puts(server_reply);
-    }
+    //close(c->_sock);
 }
 
 //char **_read_msg(char *msg, int len) {
@@ -179,10 +151,10 @@ void *Connection_listen(Connection *c) {
 //    return arr;
 //}
 
-int Connection_send(Connection *c, char *msg) {
-    //Send some data
-    return send(c->_sock , msg , strlen(msg) , 0);
-}
+//int Connection_write(Connection *c, char *msg) {
+//    //Send some data
+//    return write(c->_sock , msg , strlen(msg) , 0);
+//}
 
 char *_prepare_msg(int len, ...) {
     int i, z, t = 0;

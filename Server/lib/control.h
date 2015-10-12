@@ -10,6 +10,8 @@
 #include "connection.h"
 #include "event.h"
 #include "leaderboard.h"
+#include "instance.h"
+#include "user.h"
 
 typedef struct Connection Connection;
 typedef struct UserList UserList;

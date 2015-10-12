@@ -11,7 +11,6 @@ static const int DATA_LENGTH;
 
 typedef struct Connection {
     int port;
-    int _sock;
     pthread_t *active_threads;
 } Connection;
 
