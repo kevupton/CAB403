@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <sys/unistd.h>
 #include <pthread.h>
+#include <stdarg.h>
 #include "connection.h"
 
 static const int DATA_LENGTH = 30;
@@ -92,30 +93,28 @@ int Connection_send(char *msg) {
 }
 
 int Connection_login(char *username, char *password) {
-    char *data[2] = {username, password};
-    Connection_send(_prepare_msg("login", data, 2));
+    Connection_send(_prepare_msg(3, "login", username, password));
 }
 
-char *_prepare_msg(char *route, char **data, int len) {
-    int i;
-    char *to_send[DATA_LENGTH + 1];
+char *_prepare_msg(int len, ...) {
+    int i, z, t = 0;
+    char *msg = malloc(DATA_LENGTH * sizeof(char));
+    va_list args;
+    va_start( args, len );
 
-    for (i = 0; i < DATA_LENGTH + 1; i++) {
-        to_send[i] = malloc(DATA_SIZE * sizeof(char));
-    }
-    strncpy(to_send[0], route, sizeof(route));
-
-    for (i = 0; i < len && i < DATA_LENGTH; i += 1) {
-        strncpy(to_send[i + 1], data[i], sizeof(data[i]));
-    }
-
-    char *str = malloc(((DATA_LENGTH + 1) * DATA_SIZE) * sizeof(char));
-    int z;
-    for (i = 0; i < DATA_LENGTH + 1; i += 1) {
-        for (z = 0; z < DATA_SIZE; z += 1) {
-            str[(i * DATA_SIZE) + z] = to_send[i][z] != '\0'? to_send[i][z]: ' ';
+    for (i = 0; i < len; i++) {
+        char *arg = va_arg ( args, char* );
+        for (z = 0; z < strlen(arg); z++) {
+            msg[t] = arg[z];
+            t++;
+            if (i != len - 1 && z == strlen(arg) - 1) {
+                msg[t] = ',';
+                t++;
+            }
         }
     }
 
-    return str;
+    va_end( args );
+
+    return msg;
 }

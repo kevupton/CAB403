@@ -24,6 +24,6 @@ void *Connection_listen();
 int Connection_send(char *msg);
 int Connection_login(char *username, char *password);
 
-char *_prepare_msg(char *route, char **data, int len);
+char *_prepare_msg(int len, ...);
 
 #endif //HANGMAN_CONNECTION_H

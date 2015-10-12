@@ -13,8 +13,8 @@ void UserList_add(User *user) {
     } else {
         puts("processing");
         size_t new_size = control->userList->count + 1;
+        User **new_users = realloc(control->userList->users, new_size * sizeof(User *));
 
-        User **new_users = realloc(control->userList->users, new_size);
         if (new_users) {
             control->userList->users = new_users;
             control->userList->users[control->userList->count] = user;

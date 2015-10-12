@@ -9,10 +9,10 @@
 #include <arpa/inet.h>
 #include <sys/unistd.h>
 #include <pthread.h>
+#include <stdarg.h>
 #include "connection.h"
 
-static const int DATA_LENGTH = 30;
-static const int DATA_SIZE = 10;
+static const int DATA_LENGTH = 1000;
 
 Connection *newConnection(char *port) {
     Connection *conn = malloc(sizeof(Connection));
@@ -186,6 +186,25 @@ int Connection_send(Connection *c, char *msg) {
     return send(c->_sock , msg , strlen(msg) , 0);
 }
 
-char *_prepare_msg(char *route, char **data, int len) {
+char *_prepare_msg(int len, ...) {
+    int i, z, t = 0;
+    char *msg = malloc(DATA_LENGTH * sizeof(char));
+    va_list args;
+    va_start( args, len );
 
+    for (i = 0; i < len; i++) {
+        char *arg = va_arg ( args, char* );
+        for (z = 0; z < strlen(arg); z++) {
+            msg[t] = arg[z];
+            t++;
+            if (i != len - 1 && z == strlen(arg) - 1) {
+                msg[t] = ',';
+                t++;
+            }
+        }
+    }
+
+    va_end( args );
+
+    return msg;
 }
