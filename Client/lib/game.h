@@ -20,6 +20,8 @@ typedef struct Game {
     char *guesses;
     int nb_left;
     char **words;
+    int word_a;
+    int word_b;
 } Game;
 
 Game *newGame(const int word_a, const int word_b, const int nb_guesses);
@@ -31,5 +33,9 @@ void Game_show_leaderboard();
 int _menu_input();
 void Game_login();
 void Free_game(Game *g);
+void _display_hangman();
+char _get_guess();
+char *_print_word();
+void _display_line();
 
 #endif //HANGMAN_GAME_H

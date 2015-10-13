@@ -13,6 +13,8 @@ Game *newGame(const int word_a, const int word_b, const int nb_guesses) {
     g->words[1] = malloc(word_b * sizeof(char));
     g->nb_left = nb_guesses;
     g->guesses = malloc(nb_guesses * sizeof(char));
+    g->word_a = word_a;
+    g->word_b = word_b;
 
     return g;
 }
@@ -24,6 +26,7 @@ void Free_game(Game *g) {
         free(g->words);
         free(g->guesses);
         free(g);
+        g = NULL;
     }
 }
 
@@ -93,15 +96,57 @@ int _menu_input() {
 }
 
 void Game_play_hangman() {
-    puts("Playing hangman...");
     control->_game_setup = 0;
     Connection_play();
     while (!control->_game_setup) { sleep(1); }
-    printf("nb_left = %d\n", control->game->nb_left);
-    puts("Hangman");
+    while (control->game->nb_left > 0) {
+        _display_hangman();
+        _get_guess();
+        _display_line();
+
+    }
     sleep(1000);
 }
 
 void Game_show_leaderboard() {
     puts("Show Leaderboard");
+}
+
+void _display_hangman() {
+    printf("\n\nGuessed letters: %s\n\n"
+                   "Number of guesses left: %d\n\n"
+                   "Word: %s\n\n",
+            control->game->guesses,
+            control->game->nb_left,
+            _print_word());
+}
+
+void _display_line() {
+    puts("\n-----------------------------------------------\n\n");
+}
+
+char _get_guess() {
+
+}
+
+char *_print_word() {
+    int i, x = 0, y = 0, len = 2*(control->game->word_a + control->game->word_b + 1);
+    char str[len], *word_a = control->game->words[0], *word_b = control->game->words[1];
+
+    for (i = 0; i < control->game->word_a; i++) {
+        if (y) {
+            str[x] = ' ';
+        } else {
+            str[x] = word_a[i];
+        }
+
+        y += y? -1: 1;
+        x++;
+    }
+
+    for (i = 0; i < control->game->word_b; i++) {
+        str[x] = word_b[i];
+
+        x++;
+    }
 }

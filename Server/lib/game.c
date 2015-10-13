@@ -38,5 +38,6 @@ void Free_game(Game *g) {
         free(g->words);
         free(g->guesses);
         free(g);
+        g = NULL;
     }
 }
