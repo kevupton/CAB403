@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 
         control = newControl(argv);
         if (control->conn) {
-            sleep(120);
+            sleep(300);
         } else {
             puts("Could not connect");
         }

@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <sys/unistd.h>
+#include <string.h>
 #include "game.h"
 
 Game *newGame(const int word_a, const int word_b, const int nb_guesses) {
@@ -103,7 +104,7 @@ void Game_play_hangman() {
         _display_hangman();
         _get_guess();
         _display_line();
-
+        sleep(1000);
     }
     sleep(1000);
 }
@@ -115,10 +116,12 @@ void Game_show_leaderboard() {
 void _display_hangman() {
     printf("\n\nGuessed letters: %s\n\n"
                    "Number of guesses left: %d\n\n"
-                   "Word: %s\n\n",
+                   "Word: ",
             control->game->guesses,
-            control->game->nb_left,
-            _print_word());
+            control->game->nb_left);
+    _print_word();
+    printf("\n\n");
+
 }
 
 void _display_line() {
@@ -126,27 +129,34 @@ void _display_line() {
 }
 
 char _get_guess() {
-
+    printf("Enter your guess - ");
+    char *string, c;
+    int i = 0;
+    do {
+        scanf("%s", string);
+        while ((c = string[i])) {
+            if (c != ' ' && c != '\n' && c != '\t')
+                return c;
+            i++;
+        }
+    } while (1);
 }
 
-char *_print_word() {
+void _print_word() {
     int i, x = 0, y = 0, len = 2*(control->game->word_a + control->game->word_b + 1);
     char str[len], *word_a = control->game->words[0], *word_b = control->game->words[1];
+    memset(str, ' ', (size_t) (len - 1));
 
     for (i = 0; i < control->game->word_a; i++) {
-        if (y) {
-            str[x] = ' ';
-        } else {
-            str[x] = word_a[i];
-        }
-
-        y += y? -1: 1;
-        x++;
+        str[x] = word_a[i] != '\0'? word_a[i]: '_';
+        x += 2;
     }
 
+    x += 2;
     for (i = 0; i < control->game->word_b; i++) {
-        str[x] = word_b[i];
-
-        x++;
+        str[x] = word_b[i] != '\0'? word_b[i]: '_';
+        x += 2;
     }
+
+    printf(str);
 }
