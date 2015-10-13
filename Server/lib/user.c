@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include "user.h"
+#include "control.h"
 
 
 User *newUser(char *user) {
@@ -13,5 +14,29 @@ User *newUser(char *user) {
     u->played = 0;
     u->won = 0;
 
+    return u;
+}
+
+
+User *User_find(char *username) {
+    int i, len = control->users->count;
+    User *u;
+
+    for (i = 0; i < len; i++) {
+        u = List_get(control->users, i);
+        if (equals(lowercase(u->username), lowercase(username))) {
+            return u;
+        }
+    }
+
+    return NULL;
+}
+
+User *User_login(char *username) {
+    User *u = User_find(username);
+    if (u == NULL) {
+        u = newUser(username);
+        List_add(control->users, u);
+    }
     return u;
 }

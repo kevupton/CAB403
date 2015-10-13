@@ -12,5 +12,7 @@ typedef struct User {
 } User;
 
 User *newUser(char *username);
+User *User_find(char *username);
+User *User_login(char *username);
 
 #endif //SERVER_USER_H

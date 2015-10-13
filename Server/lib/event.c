@@ -18,7 +18,15 @@ void Event_run(Instance *instance, char **data, int len) {
         _event_new_game(instance);
     } else if (strcmp(key, "guess") == 0) {
         _event_check_guess(instance, data[1][0]);
+    } else if (strcmp(key, "leaderboard") == 0) {
+        _event_leaderboard(instance);
     }
+}
+
+void _event_leaderboard(Instance *in) {
+    int start_form = 0, to_take = 10;
+
+    Leaderboard *l = newLeaderboard(start_form, to_take);
 }
 
 void _event_check_guess(Instance *in, char guess) {
@@ -55,6 +63,14 @@ void _event_check_guess(Instance *in, char guess) {
         } else if (in->game->nb_left == 0) {
             return_nb = "0";
         }
+
+        int status = atoi(return_nb);
+        if (status != -1) {
+            in->user->played++;
+            in->user->won += status;
+            _update_user(in->user);
+        }
+
         char nb_left[10];
         sprintf(nb_left, "%d", in->game->nb_left);
         Connection_write(
@@ -91,6 +107,7 @@ void _event_login(Instance *in, const char *username, const char *password) {
     for (i = 0; i < control->auth->count; i++) {
         pair = List_get(control->auth, i);
         if (equals(lowercase(username), lowercase(pair[0])) && equals(password, pair[1])) {
+            in->user = User_login(pair[0]);
             Connection_write(in->_sock, _prepare_msg(3, "login", "1", pair[0]));
             return;
         }
