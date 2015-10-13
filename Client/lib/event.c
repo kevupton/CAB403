@@ -17,6 +17,30 @@ void Event_run(char **data, int len) {
         _event_login(atoi(data[1]), data[2]);
     } else if (strcmp(key, "newgame") == 0) {
         _event_new_game(atoi(data[1]), atoi(data[2]), atoi(data[3]));
+    } else if (strcmp(key, "guess") == 0) {
+        _event_guess(atoi(data[1]), atoi(data[2]), data[3], data[4], data[5]);
+    }
+
+    int i;
+    for (i = 0; i < len; i++) {
+        free(data[i]);
+    }
+    free(data);
+}
+
+void _event_guess(const int result, const int nb_left, const char *guesses, const char *word_a, const char *word_b) {
+    control->game->nb_left = nb_left;
+    strcpy(control->game->guesses, guesses);
+    /* TODO */
+    if (result == -1) {
+
+
+    } else if (result == 0) {
+
+
+    } else if (result == -1) {
+
+
     }
 }
 

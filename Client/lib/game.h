@@ -37,5 +37,6 @@ void _display_hangman();
 char _get_guess();
 void _print_word();
 void _display_line();
+void Game_guess(char guess);
 
 #endif //HANGMAN_GAME_H

@@ -16,6 +16,58 @@ void Event_run(Instance *instance, char **data, int len) {
         _event_login(instance, data[1], data[2]);
     } else if (strcmp(key, "newgame") == 0) {
         _event_new_game(instance);
+    } else if (strcmp(key, "guess") == 0) {
+        _event_check_guess(instance, data[1][0]);
+    }
+}
+
+void _event_check_guess(Instance *in, char guess) {
+    if (in->game->nb_left > 0) {
+        int i;
+        char *word_a = in->game->words[0];
+        char *word_b = in->game->words[1];
+        int word_a_comp = 1, word_b_comp = 1;
+        guess = tolower(guess);
+
+        for (i = 0; i < in->game->word_a; i++) {
+            if (tolower(word_a[i]) == guess) {
+                in->game->visible[0][i] = guess;
+            }
+            if (in->game->visible[0][i] == '\0')
+                word_a_comp = 0;
+        }
+
+        for (i = 0; i < in->game->word_b; i++) {
+            if (tolower(word_b[i]) == guess) {
+                in->game->visible[1][i] = guess;
+            }
+            if (in->game->visible[1][i] == '\0')
+                word_b_comp = 0;
+        }
+
+        in->game->guesses[in->game->nb_guesses] = guess;
+        in->game->nb_guesses++;
+        in->game->nb_left--;
+
+        char *return_nb = "-1";
+        if (word_a_comp && word_b_comp) {
+            return_nb = "1";
+        } else if (in->game->nb_left == 0) {
+            return_nb = "0";
+        }
+
+        Connection_write(
+                in->_sock,
+                _prepare_msg(
+                    6,
+                    "guess",
+                    return_nb,
+                    in->game->nb_left,
+                    in->game->guesses,
+                    in->game->visible[0],
+                    in->game->visible[1]
+                )
+        );
     }
 }
 

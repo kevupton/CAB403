@@ -15,6 +15,9 @@ typedef struct Game {
     char *guesses;
     int nb_left;
     char **words;
+    char **visible;
+    int word_a;
+    int word_b;
     int index;
     int nb_guesses;
 } Game;

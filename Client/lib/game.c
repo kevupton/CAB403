@@ -13,7 +13,7 @@ Game *newGame(const int word_a, const int word_b, const int nb_guesses) {
     g->words[0] = malloc(word_a * sizeof(char));
     g->words[1] = malloc(word_b * sizeof(char));
     g->nb_left = nb_guesses;
-    g->guesses = malloc(nb_guesses * sizeof(char));
+    g->guesses = malloc((1 + nb_guesses) * sizeof(char));
     g->word_a = word_a;
     g->word_b = word_b;
 
@@ -99,11 +99,14 @@ int _menu_input() {
 void Game_play_hangman() {
     control->_game_setup = 0;
     Connection_play();
+    char guess;
     while (!control->_game_setup) { sleep(1); }
     while (control->game->nb_left > 0) {
         _display_hangman();
-        _get_guess();
+        guess = _get_guess();
         _display_line();
+
+
         sleep(1000);
     }
     sleep(1000);
@@ -159,4 +162,11 @@ void _print_word() {
     }
 
     printf(str);
+}
+
+void Game_guess(char guess) {
+    char c[1];
+    sprintf(c, "%c", guess);
+
+    Connection_send(_prepare_msg(2, "guess", c));
 }

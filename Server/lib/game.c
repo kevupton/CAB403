@@ -16,8 +16,13 @@ Game *newGame(int *prev_index) {
     (*prev_index) = g->index;
     nb_left = (int) (strlen(g->words[0]) + strlen(g->words[1]) + 10);
     g->nb_left = (nb_left > 26)? 26: nb_left;
-    g->guesses = "";
+    g->guesses = malloc((nb_left + 1) * sizeof(char));
     g->nb_guesses = 0;
+    g->word_a = (int) strlen(g->words[0]);
+    g->word_b = (int) strlen(g->words[1]);
+    g->visible = malloc(2*sizeof(char*));
+    g->visible[0] = malloc(g->word_a * sizeof(char));
+    g->visible[1] = malloc(g->word_b * sizeof(char));
 
     return g;
 }
@@ -37,6 +42,9 @@ void Free_game(Game *g) {
         free(g->words[1]);
         free(g->words);
         free(g->guesses);
+        free(g->visible[0]);
+        free(g->visible[1]);
+        free(g->visible);
         free(g);
         g = NULL;
     }
