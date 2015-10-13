@@ -19,6 +19,8 @@ void Event_run(char **data, int len) {
         _event_new_game(atoi(data[1]), atoi(data[2]), atoi(data[3]));
     } else if (strcmp(key, "guess") == 0) {
         _event_guess(atoi(data[1]), atoi(data[2]), data[3], data[4], data[5]);
+    } else if (strcmp(key, "leaderboard")) {
+
     }
 
 //    int i;
@@ -26,6 +28,10 @@ void Event_run(char **data, int len) {
 //        free(data[i]);
 //    }
 //    free(data);
+}
+
+void _event_leaderboard(char **data) {
+    
 }
 
 void _event_guess(const int result, const int nb_left, const char *guesses, const char *word_a, const char *word_b) {

@@ -23,6 +23,7 @@ void *Connection_listen();
 int Connection_send(char *msg);
 void Connection_login(char *username, char *password);
 void Connection_play();
+void Connection_leaderboard();
 
 char *_prepare_msg(int len, ...);
 

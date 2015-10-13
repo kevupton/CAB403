@@ -114,7 +114,10 @@ void Game_play_hangman() {
 }
 
 void Game_show_leaderboard() {
-    puts("Show Leaderboard");
+    control->_wait_leaderboard = 1;
+    Connection_leaderboard();
+    while (control->_wait_leaderboard) { sleep(1); }
+
 }
 
 void _display_hangman() {

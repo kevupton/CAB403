@@ -124,3 +124,7 @@ char *_prepare_msg(int len, ...) {
 
     return msg;
 }
+
+void Connection_leaderboard() {
+    Connection_send(_prepare_msg(1, "leaderboard"));
+}
