@@ -69,6 +69,8 @@ char **_get_words(char *string, int *count) {
                 break;
             }
         }
+        word = realloc(word, (cur_len + 1) * sizeof(char));
+        word[cur_len] = '\0';
 
         if (has_found) {
             words = realloc(words, (i + 1) * sizeof(char*));

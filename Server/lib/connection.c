@@ -76,6 +76,16 @@ void *Connection_handler(void *i)
                 memset(client_message, 0, DATA_LENGTH);
             }
             Instance_reset(instance);
+
+            if(read_size == 0)
+            {
+                puts("Client disconnected");
+                fflush(stdout);
+            }
+            else if(read_size == -1)
+            {
+                perror("recv failed");
+            }
             puts("Connection Closed");
         }
         sleep(1);

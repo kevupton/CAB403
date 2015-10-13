@@ -18,9 +18,8 @@ void Event_run(Instance *instance, char **data, int len) {
 
 void _event_login(Instance *in, const char *username, const char *password) {
     FILE *fp;
-    char *line, *fuser, *fpass;
-    size_t len;
-    ssize_t read;
+    char *fuser, *fpass;
+    int r;
 
     puts("logging in...");
 
@@ -30,9 +29,11 @@ void _event_login(Instance *in, const char *username, const char *password) {
 
     puts(username);
     puts(password);
-    read = getline(&line, &len, fp);
-    while ((read = getline(&line, &len, fp)) != -1) {
-        fscanf(line, "%s %s", fuser, fpass);
+
+    r = fscanf(fp, "%s %s", fuser, fpass);
+    while (r != EOF) {
+        r = fscanf(fp, "%s %s\n", fuser, fpass);
+        printf("%s %s\n", fuser, fpass);
 
         if (equals(lowercase(fuser), lowercase(username)) &&
                 equals(fpass, password)) {
@@ -67,6 +68,8 @@ char **_get_words(char *string, int *count) {
                 break;
             }
         }
+        word = realloc(word, (cur_len + 1) * sizeof(char));
+        word[cur_len] = '\0';
 
         if (has_found) {
             words = realloc(words, (i + 1) * sizeof(char*));
