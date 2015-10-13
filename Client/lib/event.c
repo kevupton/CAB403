@@ -15,7 +15,16 @@ void Event_run(char **data, int len) {
 
     if (strcmp(key, "login") == 0) {
         _event_login(atoi(data[1]), data[2]);
+    } else if (strcmp(key, "newgame") == 0) {
+        _event_new_game(atoi(data[1]), atoi(data[2]), atoi(data[3]));
     }
+}
+
+void _event_new_game(const int word_a, const int word_b, const int guesses) {
+    control->_game_setup = 1;
+    Free_game(control->game);
+    control->game = newGame(word_a, word_b, guesses);
+    puts("Created game");
 }
 
 void _event_login(const int success, char *msg) {

@@ -11,9 +11,25 @@
 
 
 void Event_run(Instance *instance, char **data, int len) {
-    if (strcmp(data[0], "login") == 0) {
+    char *key = data[0];
+    if (strcmp(key, "login") == 0) {
         _event_login(instance, data[1], data[2]);
+    } else if (strcmp(key, "newgame") == 0) {
+        _event_new_game(instance);
     }
+}
+
+void _event_new_game(Instance *in) {
+    puts("Creating new game\n");
+    Free_game(in->game);
+    in->game = newGame(&in->prev_game_index);
+
+    char *str = malloc(DATA_LENGTH * sizeof(char));
+    sprintf(str, "newgame,%d,%d,%d",
+            (int) strlen(in->game->words[0]),
+            (int) strlen(in->game->words[1]),
+            in->game->nb_left);
+    Connection_write(in->_sock, str);
 }
 
 void _event_login(Instance *in, const char *username, const char *password) {

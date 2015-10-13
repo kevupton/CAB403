@@ -17,7 +17,7 @@ Control *newControl(char *argv[]) {
         c->users = newList(sizeof(User *));
         c->instances = newList(sizeof(Instance*));
         c->auth = newList((2*sizeof(char *)));
-
+        c->words = newList(2*sizeof(char*));
         _boot(c);
     }
 
@@ -28,6 +28,9 @@ void _boot(Control *control) {
     int i;
     Instance *instance;
 
+    /** Random seed initialisation **/
+    srand((unsigned) time(NULL));
+
     for (i = 0; i < MAX_PLAYERS; i++) {
         instance = newInstance();
         List_add(control->instances, instance);
@@ -35,6 +38,7 @@ void _boot(Control *control) {
 
     _start_worker(control);
     _load_authentication(control);
+    _load_words(control);
 }
 
 void _start_worker(Control *control) {
@@ -83,6 +87,33 @@ void _load_authentication(Control *control) {
         pair[1] = fpass;
 
         List_add(control->auth, pair);
+    }
+
+    fclose(fp);
+}
+
+void _load_words(Control *control) {
+    FILE *fp;
+    char **words, buf[100];
+    int nb_words;
+
+    fp = fopen("hangman_text.txt", "r");
+    if (fp == NULL) {
+        puts("Unable to read Auth file");
+        exit(EXIT_FAILURE);
+    }
+
+    void **pair;
+
+    fgets(buf, sizeof buf, fp);
+    while (fgets(buf, sizeof buf, fp) != NULL) {
+        pair = malloc(2*sizeof(char*));
+        words = _get_words(buf, &nb_words, ",\n");
+
+        pair[0] = words[0];
+        pair[1] = words[1];
+
+        List_add(control->words, pair);
     }
 
     fclose(fp);

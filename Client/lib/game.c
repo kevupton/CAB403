@@ -3,14 +3,28 @@
 //
 
 #include <stdio.h>
-#include <string.h>
 #include <sys/unistd.h>
 #include "game.h"
 
-Game *newGame(int id) {
+Game *newGame(const int word_a, const int word_b, const int nb_guesses) {
     Game *g = malloc(sizeof(Game));
-    g->id = id;
+    g->words = malloc(2*sizeof(char*));
+    g->words[0] = malloc(word_a * sizeof(char));
+    g->words[1] = malloc(word_b * sizeof(char));
+    g->nb_left = nb_guesses;
+    g->guesses = malloc(nb_guesses * sizeof(char));
+
     return g;
+}
+
+void Free_game(Game *g) {
+    if (g != NULL) {
+        free(g->words[0]);
+        free(g->words[1]);
+        free(g->words);
+        free(g->guesses);
+        free(g);
+    }
 }
 
 void Game_initialise() {
@@ -79,8 +93,13 @@ int _menu_input() {
 }
 
 void Game_play_hangman() {
-
+    puts("Playing hangman...");
+    control->_game_setup = 0;
+    Connection_play();
+    while (!control->_game_setup) { sleep(1); }
+    printf("nb_left = %d\n", control->game->nb_left);
     puts("Hangman");
+    sleep(1000);
 }
 
 void Game_show_leaderboard() {

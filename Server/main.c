@@ -11,8 +11,13 @@ int main(int argc, char *argv[]) {
     if (argc != 2) {
         puts("Server requires a Port number");
     } else {
+
         control = newControl(argv);
-        sleep(120);
+        if (control->conn) {
+            sleep(120);
+        } else {
+            puts("Could not connect");
+        }
 //        int toget = 11;
 //
 //        User *kevin = newUser("kevin");

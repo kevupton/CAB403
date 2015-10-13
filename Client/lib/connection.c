@@ -74,6 +74,7 @@ void *Connection_listen() {
         //Receive a reply from the server
         if((n = recv(control->conn->_sock , server_reply , DATA_LENGTH , 0)) > 0)
         {
+            puts(server_reply);
             char **data = _get_words(server_reply, &nb_words, ",");
             Event_run(data, nb_words);
         }
@@ -91,8 +92,12 @@ int Connection_send(char *msg) {
     return send(control->conn->_sock , msg , strlen(msg) , 0);
 }
 
-int Connection_login(char *username, char *password) {
+void Connection_login(char *username, char *password) {
     Connection_send(_prepare_msg(3, "login", username, password));
+}
+
+void Connection_play() {
+    Connection_send("newgame");
 }
 
 char *_prepare_msg(int len, ...) {

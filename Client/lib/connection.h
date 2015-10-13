@@ -21,7 +21,8 @@ int Connection_initialise();
 void Connection_close();
 void *Connection_listen();
 int Connection_send(char *msg);
-int Connection_login(char *username, char *password);
+void Connection_login(char *username, char *password);
+void Connection_play();
 
 char *_prepare_msg(int len, ...);
 

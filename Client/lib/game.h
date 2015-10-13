@@ -17,21 +17,19 @@ typedef enum {
 
 typedef struct Control Control;
 typedef struct Game {
-    int id;
     char *guesses;
     int nb_left;
-    char **word;
+    char **words;
 } Game;
 
-Game *newGame(int id);
+Game *newGame(const int word_a, const int word_b, const int nb_guesses);
 void Game_initialise();
-void Game_board();
 void Game_welcome();
 void Game_menu();
 void Game_play_hangman();
 void Game_show_leaderboard();
 int _menu_input();
 void Game_login();
-void Game_parse_login(int success, char *username);
+void Free_game(Game *g);
 
 #endif //HANGMAN_GAME_H

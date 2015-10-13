@@ -12,11 +12,13 @@
 typedef struct Game Game;
 
 typedef struct Instance {
-    volatile Game *game;
-    volatile User *user;
+    Game *game;
+    User *user;
     volatile int _sock;
     volatile int in_use;
     volatile int keep_alive;
+
+    int prev_game_index;
 
     pthread_t _thread;
 } Instance;

@@ -12,14 +12,15 @@ typedef struct Control Control;
 static const int STARTING_GUESSES;
 
 typedef struct Game {
-    int id;
     char *guesses;
     int nb_left;
-    char **word;
+    char **words;
+    int index;
+    int nb_guesses;
 } Game;
 
-Game *newGame(int id);
-void Game_initialise();
-void Game_board(Game *g);
+Game *newGame(int *prev_index);
+void ** _get_random_pair(const int prev_index, int *new_index);
+void Free_game(Game *g);
 
 #endif //HANGMAN_GAME_H

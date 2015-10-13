@@ -23,6 +23,7 @@ typedef struct Control {
     List *users;
     List *instances;
     List *auth;
+    List *words;
     pthread_t _control_thread;
 } Control;
 
@@ -33,5 +34,6 @@ void Controller_run();
 void _boot(Control *control);
 void _start_worker(Control *control);
 void _load_authentication(Control *control);
+void _load_words(Control *control);
 
 #endif //HANGMAN_CONTROL_H

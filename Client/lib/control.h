@@ -17,6 +17,7 @@ typedef struct Control {
     volatile int keep_alive;
     char *username;
     volatile int _login_received;
+    volatile int _game_setup;
 } Control;
 
 Control *newControl(char *argv[]);
