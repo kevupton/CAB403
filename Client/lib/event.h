@@ -6,7 +6,7 @@
 #define SERVER_EVENT_H
 
 void Event_run(char **data, int len);
-void _event_login(const int success, const char *username);
+void _event_login(const int success, char *msg);
 char **_get_words(char *string, int *count, char *split);
 char *lowercase(const char *str);
 int equals(const char *a, const char *b);

@@ -11,13 +11,21 @@
 
 
 void Event_run(char **data, int len) {
-    if (strcmp(data[0], "login") == 0) {
+    char *key = data[0];
+
+    if (strcmp(key, "login") == 0) {
         _event_login(atoi(data[1]), data[2]);
     }
 }
 
-void _event_login(const int success,const char *username) {
-
+void _event_login(const int success, char *msg) {
+    if (success) {
+        control->username = msg;
+    } else {
+        puts(msg);
+        Control_exit();
+    }
+    control->_login_received = 1;
 }
 
 char **_get_words(char *string, int *count, char *split) {

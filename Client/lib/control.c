@@ -15,5 +15,6 @@ Control *newControl(char *argv[]) {
 }
 
 void Control_exit() {
-
+    Connection_close();
+    exit(0);
 }

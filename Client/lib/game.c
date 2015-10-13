@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sys/unistd.h>
 #include "game.h"
 
 Game *newGame(int id) {
@@ -15,18 +16,19 @@ Game *newGame(int id) {
 void Game_initialise() {
     Game_welcome();
     Game_login();
-    char cc[1000];
-    while (1) {
-        printf("Enter Character : ");
-        scanf("%s" , cc);
-        puts(cc);
+    int input;
 
-        Connection_send(cc);
-
-        if (strcmp(cc, "exit") == 0) {
-            break;
+    do {
+        Game_menu();
+        switch ((input = _menu_input())) {
+            case PLAY_HANGMAN:
+                Game_play_hangman();
+                break;
+            case SHOW_LEADERBOARD:
+                Game_show_leaderboard();
+                break;
         }
-    }
+    } while (input != QUIT);
 }
 
 void Game_board() {
@@ -39,7 +41,7 @@ void Game_welcome() {
                  "================================\n\n");
 }
 
-int Game_login() {
+void Game_login() {
     char username[100], password[100];
     puts("You are required to logon with your registered Username and Password\n");
 
@@ -50,19 +52,37 @@ int Game_login() {
     scanf("%s", password);
 
     Connection_login(username, password);
-    puts("loading...");
 
-    while (control->game->_login_received = 0) {}
+    while (!control->_login_received) {
+        sleep(1);
+    }
 }
 
-void Game_parse_login(int success, char *username, int id) {
-    if (success) {
-        control->game->username = username;
-        control->game->id = id;
-    } else {
-        puts("You entered either an incorrect username or password - dosconnecting");
-        Control_exit();
-    }
-    printf("Welcome %s \n", username);
-    control->game->_login_received = 1;
+void Game_menu() {
+    puts("\n\n\nWelcome to the hangman Gaming System\n\n\n\n\n"
+                 "Please enter a selection\n"
+                 "<1> Play Hangman\n"
+                 "<2> Show Leaderboard\n"
+                 "<3> Quit\n\n");
+}
+
+int _menu_input() {
+    int input = 0;
+    char in[1];
+    do {
+        printf("Select option 1-3 ->");
+        scanf("%s", in);
+        input = atoi(in);
+    } while (input < 1 || input > 3);
+
+    return input;
+}
+
+void Game_play_hangman() {
+
+    puts("Hangman");
+}
+
+void Game_show_leaderboard() {
+    puts("Show Leaderboard");
 }

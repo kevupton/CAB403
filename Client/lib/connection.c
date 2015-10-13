@@ -72,15 +72,17 @@ void *Connection_listen() {
         memset(server_reply, 0, DATA_LENGTH);
 
         //Receive a reply from the server
-        if((n = recv(control->conn->_sock , server_reply , DATA_LENGTH , 0)) <= 0)
+        if((n = recv(control->conn->_sock , server_reply , DATA_LENGTH , 0)) > 0)
         {
             char **data = _get_words(server_reply, &nb_words, ",");
             Event_run(data, nb_words);
         }
         if (n != 0) {
-            puts("Server reply :");
-            puts(server_reply);
+//            puts("Server reply :");
+//            puts(server_reply);
         }
+
+        sleep(1);
     }
 }
 

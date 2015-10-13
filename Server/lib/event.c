@@ -28,7 +28,7 @@ void _event_login(Instance *in, const char *username, const char *password) {
             return;
         }
     }
-    Connection_write(in->_sock, _prepare_msg(3, "login", "0", "invalid-login"));
+    Connection_write(in->_sock, _prepare_msg(3, "login", "0", "You entered either an incorrect username or password - disconnecting"));
     puts("Login Failed");
 }
 

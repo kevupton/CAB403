@@ -5,7 +5,6 @@
 #ifndef HANGMAN_CONTROL_H
 #define HANGMAN_CONTROL_H
 
-#include "gamelist.h"
 #include "game.h"
 #include "connection.h"
 #include "event.h"
@@ -17,6 +16,7 @@ typedef struct Control {
     Connection *conn;
     volatile int keep_alive;
     char *username;
+    volatile int _login_received;
 } Control;
 
 Control *newControl(char *argv[]);
