@@ -5,7 +5,7 @@
 #ifndef HANGMAN_CONTROL_H
 #define HANGMAN_CONTROL_H
 
-#include "userlist.h"
+#include "list.h"
 #include "game.h"
 #include "connection.h"
 #include "event.h"
@@ -13,15 +13,23 @@
 #include "instance.h"
 #include "user.h"
 
+static const int MAX_PLAYERS;
+
 typedef struct Connection Connection;
-typedef struct UserList UserList;
+typedef struct List List;
 
 typedef struct Control {
     Connection *conn;
-    UserList *userList;
+    List *users;
+    List *instances;
+    pthread_t _control_thread;
 } Control;
 
 Control *newControl(char *argv[]);
 Control *control;
+void Controller_run();
+
+void _boot(Control *control);
+void _start_worker(Control *control);
 
 #endif //HANGMAN_CONTROL_H

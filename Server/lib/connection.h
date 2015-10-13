@@ -6,19 +6,23 @@
 #define HANGMAN_CONNECTION_H
 
 #include "control.h"
+#include "instance.h"
 
 static const int DATA_LENGTH;
+
+typedef struct Instance Instance;
 
 typedef struct Connection {
     int port;
     pthread_t *active_threads;
+    int _sock;
 } Connection;
 
 Connection *newConnection(char *port);
 int Connection_initialise(Connection *c);
 void Connection_close(Connection *c);
-void *Connection_listen(Connection *c);
-int Connection_send(Connection *c, char *msg);
+void *Connection_listen(void *conn);
+int Connection_write(int sock, char *msg);
 void *Connection_handler(void *socket_desc);
 char *_prepare_msg(int len, ...);
 

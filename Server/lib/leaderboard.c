@@ -14,8 +14,8 @@ Leaderboard *newLeaderboard(int start_from, int count) {
     l->count = 0;
 
     int i;
-    for (i = 0; i < count && (i + start_from) < control->userList->count; i++) {
-        User *u = control->userList->users[i + start_from];
+    for (i = 0; i < count && (i + start_from) < control->users->count; i++) {
+        User *u = control->users->items[i + start_from];
         if (u->played >= 0) {
             l->names[i] = u->username;
             l->wins[i] = u->won;
@@ -47,12 +47,12 @@ Leaderboard *newLeaderboard(int start_from, int count) {
 int _get_score_pos(const int high_pos, const int low_pos, const User *user) {
     int half_pos = (low_pos - high_pos)/2 + high_pos;
 
-    User    *low  = control->userList->users[low_pos],
-            *high = control->userList->users[high_pos],
-            *half = control->userList->users[half_pos];
+    User    *low  = control->users->items[low_pos],
+            *high = control->users->items[high_pos],
+            *half = control->users->items[half_pos];
 
-    if (high == user) high = control->userList->users[high_pos + 1];
-    if (low == user) low = control->userList->users[low_pos - 1];
+    if (high == user) high = control->users->items[high_pos + 1];
+    if (low == user) low = control->users->items[low_pos - 1];
 
     if (user->won > high->won) {
         return high_pos;
@@ -75,20 +75,20 @@ int _get_score_pos(const int high_pos, const int low_pos, const User *user) {
 }
 
 int _get_sub_pos(const User *user, int pos) {
-    User **users = control->userList->users;
+    void **items = control->users->items;
     int x;
 
     x = pos;
-
-    if (users[x]->played >= user->played) {
-        while (x >= 0 && users[x]->played >= user->played && users[x]->won == user->won) {
+    User *userx = (User *) items[x];
+    if (userx->played >= user->played) {
+        while (x >= 0 && userx->played >= user->played && userx->won == user->won) {
             pos = x;
             x--;
         }
     } else {
         pos++;
         x = pos;
-        while (x < control->userList->count && users[x]->played < user->played && users[x]->won == user->won) {
+        while (x < control->users->count && userx->played < user->played && userx->won == user->won) {
             pos = x;
             x++;
         }
@@ -98,8 +98,8 @@ int _get_sub_pos(const User *user, int pos) {
 }
 
 void _update_user(User *user) {
-    int pos = _get_score_pos(0, control->userList->count - 1, user);
+    int pos = _get_score_pos(0, control->users->count - 1, user);
     printf("pos = %d\n", pos);
-    UserList_move_user(user, pos);
+    List_move(NULL, user, pos);
 }
 

@@ -3,6 +3,7 @@
 //
 
 #include <stdio.h>
+#include <sys/unistd.h>
 #include "lib/control.h"
 
 int main(int argc, char *argv[]) {
@@ -10,9 +11,7 @@ int main(int argc, char *argv[]) {
         puts("Server requires a Port number");
     } else {
         control = newControl(argv);
-
-        printf("%d", sizeof(User));
-//
+        sleep(300);
 //        int toget = 11;
 //
 //        User *kevin = newUser("kevin");
@@ -21,11 +20,11 @@ int main(int argc, char *argv[]) {
 //        User *adam = newUser("adam");
 //        User *krissy = newUser("krissy");
 //
-//        UserList_add(kevin);
-//        UserList_add(bob);
-//        UserList_add(joe);
-//        UserList_add(adam);
-//        UserList_add(krissy);
+//        List_add(kevin);
+//        List_add(bob);
+//        List_add(joe);
+//        List_add(adam);
+//        List_add(krissy);
 //
 //        puts("starting");
 //
@@ -52,7 +51,7 @@ int main(int argc, char *argv[]) {
 //        puts("updating");
 //
 //
-//        printf("list = %d\n", control->userList->count);
+//        printf("list = %d\n", control->users->count);
 //
 //        Leaderboard *l = newLeaderboard(0, 10);
 //
@@ -61,7 +60,7 @@ int main(int argc, char *argv[]) {
 //            printf("%s - %d - %d\n", l->names[i], l->played[i], l->wins[i]);
 //        }
 //
-//        printf("\n\n%d", control->userList->count);
+//        printf("\n\n%d", control->users->count);
 
     }
     return 0;

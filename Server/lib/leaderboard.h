@@ -6,7 +6,7 @@
 #define SERVER_LEADERBOARD_H
 
 #include "user.h"
-#include "userlist.h"
+#include "list.h"
 
 typedef struct Leaderboard {
     char **names;

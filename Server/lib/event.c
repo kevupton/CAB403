@@ -10,18 +10,18 @@
 #include "connection.h"
 
 
-void Event_run(char **data, int len) {
+void Event_run(Instance *instance, char **data, int len) {
     if (strcmp(data[0], "login") == 0) {
-        _event_login(data[1], data[2]);
+        _event_login(instance, data[1], data[2]);
     }
 }
 
-void _event_login(const char *username,const char *password) {
+void _event_login(Instance *in, const char *username, const char *password) {
     FILE *fp;
-    char *line, **words;
+    char *line, *fuser, *fpass;
     size_t len;
     ssize_t read;
-    int nb_words;
+
     puts("logging in...");
 
     fp = fopen("Authentication.txt", "r");
@@ -32,18 +32,17 @@ void _event_login(const char *username,const char *password) {
     puts(password);
     read = getline(&line, &len, fp);
     while ((read = getline(&line, &len, fp)) != -1) {
-        words = _get_words(line, &nb_words);
+        fscanf(line, "%s %s", fuser, fpass);
 
-        if (equals(lowercase(words[0]), lowercase(username)) &&
-                equals(words[1], password)) {
-            //send login success
-
+        if (equals(lowercase(fuser), lowercase(username)) &&
+                equals(fpass, password)) {
+            Connection_write(in->_sock, _prepare_msg(3, "login", "1", fuser));
+            puts("Login Success");
             return;
         }
     }
-
+    puts("Login Fail");
     //send login failure
-
 }
 
 char **_get_words(char *string, int *count) {

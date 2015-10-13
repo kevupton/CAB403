@@ -15,10 +15,14 @@ typedef struct Instance {
     volatile Game *game;
     volatile User *user;
     volatile int _sock;
-    const pthread_t *_thread;
+    volatile int in_use;
+    volatile int keep_alive;
+
+    pthread_t _thread;
 } Instance;
 
 Instance *newInstance();
-
+Instance *Instance_get_available();
+void Instance_reset(Instance *i);
 
 #endif //SERVER_INSTANCE_H
