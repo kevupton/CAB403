@@ -66,13 +66,14 @@ void List_move(List *list, void *item, int pos) {
 }
 
 
-void Free_list(List *list) {
+void Free_list(List **list) {
     if (list != NULL) {
         int i;
-        for (i = 0; i < list->count; i++) {
-            free(list->items[i]);
+        for (i = 0; i < (*list)->count; i++) {
+            free((*list)->items[i]);
         }
-        free(list->items);
-        free(list);
+        free((*list)->items);
+        free((*list));
+        (*list) = NULL;
     }
 }

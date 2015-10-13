@@ -69,6 +69,7 @@ void *Connection_handler(void *i)
             printf("Client connected to thread %d\n", List_index(control->instances, instance));
             while((read_size = recv(instance->_sock , client_message , DATA_LENGTH , 0)) > 0)
             {
+                puts(client_message);
                 char **data = _get_words(client_message, &nb_words, ",");
                 Event_run(instance, data, nb_words);
 
@@ -121,13 +122,16 @@ void Connection_close(Connection *c) {
     //close(c->_sock);
 }
 
-int Connection_write(int sock, char *msg) {
-    return write(sock , msg , strlen(msg));
+void Connection_write(int sock, char *msg) {
+    write(sock , msg , strlen(msg));
+    free(msg);
 }
 
 char *_prepare_msg(int len, ...) {
     int i, z, t = 0;
     char *msg = malloc(DATA_LENGTH * sizeof(char));
+    memset(msg, 0, DATA_LENGTH);
+
     va_list args;
     va_start( args, len );
 

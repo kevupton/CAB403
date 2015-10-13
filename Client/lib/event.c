@@ -21,32 +21,37 @@ void Event_run(char **data, int len) {
         _event_guess(atoi(data[1]), atoi(data[2]), data[3], data[4], data[5]);
     }
 
-    int i;
-    for (i = 0; i < len; i++) {
-        free(data[i]);
-    }
-    free(data);
+//    int i;
+//    for (i = 0; i < len; i++) {
+//        free(data[i]);
+//    }
+//    free(data);
 }
 
 void _event_guess(const int result, const int nb_left, const char *guesses, const char *word_a, const char *word_b) {
     control->game->nb_left = nb_left;
     strcpy(control->game->guesses, guesses);
-    /* TODO */
-    if (result == -1) {
 
-
-    } else if (result == 0) {
-
-
-    } else if (result == -1) {
-
-
+    int i;
+    for (i = 0; i < control->game->word_a; i++) {
+        if (word_a[i] != '_') {
+            control->game->words[0][i] = word_a[i];
+        }
     }
+
+    for (i = 0; i < control->game->word_b; i++) {
+        if (word_b[i] != '_') {
+            control->game->words[1][i] = word_b[i];
+        }
+    }
+
+    control->game->status = result;
+    control->_game_guessing = 0;
 }
 
 void _event_new_game(const int word_a, const int word_b, const int guesses) {
     control->_game_setup = 1;
-    Free_game(control->game);
+    Free_game(&control->game);
     control->game = newGame(word_a, word_b, guesses);
     puts("Created game");
 }

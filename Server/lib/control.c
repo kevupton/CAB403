@@ -28,9 +28,6 @@ void _boot(Control *control) {
     int i;
     Instance *instance;
 
-    /** Random seed initialisation **/
-    srand((unsigned) time(NULL));
-
     for (i = 0; i < MAX_PLAYERS; i++) {
         instance = newInstance();
         List_add(control->instances, instance);

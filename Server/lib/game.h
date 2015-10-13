@@ -24,6 +24,6 @@ typedef struct Game {
 
 Game *newGame(int *prev_index);
 void ** _get_random_pair(const int prev_index, int *new_index);
-void Free_game(Game *g);
+void Free_game(Game **g);
 
 #endif //HANGMAN_GAME_H

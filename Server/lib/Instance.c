@@ -43,7 +43,7 @@ Instance *Instance_get_available() {
 void Instance_reset(Instance *i) {
     i->_sock = 0;
     i->user = NULL;
-    Free_game(i->game);
+    Free_game(&i->game);
     i->in_use = 0;
     i->keep_alive = 1;
     i->prev_game_index = -1;

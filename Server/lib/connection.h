@@ -21,7 +21,7 @@ typedef struct Connection {
 Connection *newConnection(char *port);
 void Connection_close(Connection *c);
 void *Connection_listen(void *conn);
-int Connection_write(int sock, char *msg);
+void Connection_write(int sock, char *msg);
 void *Connection_handler(void *socket_desc);
 char *_prepare_msg(int len, ...);
 

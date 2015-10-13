@@ -103,6 +103,8 @@ void Connection_play() {
 char *_prepare_msg(int len, ...) {
     int i, z, t = 0;
     char *msg = malloc(DATA_LENGTH * sizeof(char));
+    memset(msg, 0, DATA_LENGTH);
+
     va_list args;
     va_start( args, len );
 

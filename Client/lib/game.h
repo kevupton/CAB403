@@ -22,21 +22,25 @@ typedef struct Game {
     char **words;
     int word_a;
     int word_b;
+    int status;
 } Game;
 
 Game *newGame(const int word_a, const int word_b, const int nb_guesses);
 void Game_initialise();
 void Game_welcome();
 void Game_menu();
+void Game_title();
 void Game_play_hangman();
 void Game_show_leaderboard();
 int _menu_input();
 void Game_login();
-void Free_game(Game *g);
+void Free_game(Game **g);
 void _display_hangman();
 char _get_guess();
 void _print_word();
 void _display_line();
-void Game_guess(char guess);
+void _display_results();
+
+void Game_guess(const char guess);
 
 #endif //HANGMAN_GAME_H

@@ -10,24 +10,25 @@
 Game *newGame(const int word_a, const int word_b, const int nb_guesses) {
     Game *g = malloc(sizeof(Game));
     g->words = malloc(2*sizeof(char*));
-    g->words[0] = malloc(word_a * sizeof(char));
-    g->words[1] = malloc(word_b * sizeof(char));
+    g->words[0] = calloc(sizeof(char), (size_t) word_a);
+    g->words[1] = calloc(sizeof(char), (size_t) word_b);
     g->nb_left = nb_guesses;
-    g->guesses = malloc((1 + nb_guesses) * sizeof(char));
+    g->guesses = calloc(sizeof(char), (size_t) (1 + nb_guesses));
     g->word_a = word_a;
     g->word_b = word_b;
+    g->status = -1;
 
     return g;
 }
 
-void Free_game(Game *g) {
-    if (g != NULL) {
-        free(g->words[0]);
-        free(g->words[1]);
-        free(g->words);
-        free(g->guesses);
-        free(g);
-        g = NULL;
+void Free_game(Game **g) {
+    if (*g != NULL) {
+        free((*g)->words[0]);
+        free((*g)->words[1]);
+        free((*g)->words);
+        free((*g)->guesses);
+        free((*g));
+        (*g) = NULL;
     }
 }
 
@@ -35,7 +36,7 @@ void Game_initialise() {
     Game_welcome();
     Game_login();
     int input;
-
+    Game_title();
     do {
         Game_menu();
         switch ((input = _menu_input())) {
@@ -49,8 +50,8 @@ void Game_initialise() {
     } while (input != QUIT);
 }
 
-void Game_board() {
-
+void Game_title() {
+    printf("\n\n\nWelcome to the hangman Gaming System\n\n\n");
 }
 
 void Game_welcome() {
@@ -77,7 +78,7 @@ void Game_login() {
 }
 
 void Game_menu() {
-    puts("\n\n\nWelcome to the hangman Gaming System\n\n\n\n\n"
+    puts("\n\n"
                  "Please enter a selection\n"
                  "<1> Play Hangman\n"
                  "<2> Show Leaderboard\n"
@@ -99,17 +100,17 @@ int _menu_input() {
 void Game_play_hangman() {
     control->_game_setup = 0;
     Connection_play();
-    char guess;
     while (!control->_game_setup) { sleep(1); }
-    while (control->game->nb_left > 0) {
+    while (control->game->nb_left > 0 && control->game->status == -1) {
+        puts("start");
         _display_hangman();
-        guess = _get_guess();
+        Game_guess(_get_guess());
         _display_line();
-
-
-        sleep(1000);
+        while (control->_game_guessing) { sleep(1); }
+        puts("next");
     }
-    sleep(1000);
+    _display_hangman();
+    _display_results();
 }
 
 void Game_show_leaderboard() {
@@ -124,7 +125,6 @@ void _display_hangman() {
             control->game->nb_left);
     _print_word();
     printf("\n\n");
-
 }
 
 void _display_line() {
@@ -133,7 +133,7 @@ void _display_line() {
 
 char _get_guess() {
     printf("Enter your guess - ");
-    char *string, c;
+    char string[100], c;
     int i = 0;
     do {
         scanf("%s", string);
@@ -164,9 +164,18 @@ void _print_word() {
     printf(str);
 }
 
-void Game_guess(char guess) {
+void Game_guess(const char guess) {
+    control->_game_guessing = 1;
     char c[1];
     sprintf(c, "%c", guess);
-
     Connection_send(_prepare_msg(2, "guess", c));
+}
+
+void _display_results() {
+    puts("Game Over\n\n");
+    if (control->game->status == 1) {
+        printf("Well done %s! You won this round of Hangman!\n", control->username);
+    } else {
+        printf("Bad luck %s! You have run out of guesses. The Hangman got you!\n", control->username);
+    }
 }

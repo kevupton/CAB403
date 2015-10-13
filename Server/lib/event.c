@@ -33,7 +33,7 @@ void _event_check_guess(Instance *in, char guess) {
             if (tolower(word_a[i]) == guess) {
                 in->game->visible[0][i] = guess;
             }
-            if (in->game->visible[0][i] == '\0')
+            if (in->game->visible[0][i] == '_')
                 word_a_comp = 0;
         }
 
@@ -41,7 +41,7 @@ void _event_check_guess(Instance *in, char guess) {
             if (tolower(word_b[i]) == guess) {
                 in->game->visible[1][i] = guess;
             }
-            if (in->game->visible[1][i] == '\0')
+            if (in->game->visible[1][i] == '_')
                 word_b_comp = 0;
         }
 
@@ -55,14 +55,15 @@ void _event_check_guess(Instance *in, char guess) {
         } else if (in->game->nb_left == 0) {
             return_nb = "0";
         }
-
+        char nb_left[10];
+        sprintf(nb_left, "%d", in->game->nb_left);
         Connection_write(
                 in->_sock,
                 _prepare_msg(
                     6,
                     "guess",
                     return_nb,
-                    in->game->nb_left,
+                    nb_left,
                     in->game->guesses,
                     in->game->visible[0],
                     in->game->visible[1]
@@ -72,8 +73,7 @@ void _event_check_guess(Instance *in, char guess) {
 }
 
 void _event_new_game(Instance *in) {
-    puts("Creating new game\n");
-    Free_game(in->game);
+    Free_game(&in->game);
     in->game = newGame(&in->prev_game_index);
 
     char *str = malloc(DATA_LENGTH * sizeof(char));
@@ -92,12 +92,10 @@ void _event_login(Instance *in, const char *username, const char *password) {
         pair = List_get(control->auth, i);
         if (equals(lowercase(username), lowercase(pair[0])) && equals(password, pair[1])) {
             Connection_write(in->_sock, _prepare_msg(3, "login", "1", pair[0]));
-            puts("Login Success");
             return;
         }
     }
     Connection_write(in->_sock, _prepare_msg(3, "login", "0", "You entered either an incorrect username or password - disconnecting"));
-    puts("Login Failed");
 }
 
 char **_get_words(char *string, int *count, char *split) {
