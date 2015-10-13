@@ -27,23 +27,6 @@ Leaderboard *newLeaderboard(int start_from, int count) {
     return l;
 }
 
-//    int pos = _get_score_pos(0, LEADERBOARD_LIMIT - 1, score), i, count = control->leaderboard->count;
-//    if (count == 0) {
-//        control->leaderboard->scores[0] = score;
-//        control->leaderboard->names[0] = board;
-//    } else {
-//        for (i = count == LEADERBOARD_LIMIT? LEADERBOARD_LIMIT - 1: count; i > pos; i--) {
-//            control->leaderboard->scores[i] = control->leaderboard->scores[i - 1];
-//            control->leaderboard->names[i] = control->leaderboard->names[i - 1];
-//        }
-//        control->leaderboard->scores[pos] = score;
-//        control->leaderboard->names[pos] = board;
-//    }
-//
-//    if (count < LEADERBOARD_LIMIT)
-//        control->leaderboard->count++;
-//}
-
 int _get_score_pos(const int high_pos, const int low_pos, const User *user) {
     int half_pos = (low_pos - high_pos)/2 + high_pos;
 
