@@ -70,7 +70,7 @@ void *Connection_handler(void *i)
             printf("Client connected to thread %d\n", List_index(control->instances, instance));
             while((read_size = recv(instance->_sock , client_message , DATA_LENGTH , 0)) > 0)
             {
-                char **data = _get_words(client_message, &nb_words);
+                char **data = _get_words(client_message, &nb_words, ",");
                 Event_run(instance, data, nb_words);
 
                 memset(client_message, 0, DATA_LENGTH);

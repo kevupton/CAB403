@@ -17,38 +17,22 @@ void Event_run(Instance *instance, char **data, int len) {
 }
 
 void _event_login(Instance *in, const char *username, const char *password) {
-    FILE *fp;
-    char *fuser, *fpass;
-    int r;
+    int i;
 
-    puts("logging in...");
-
-    fp = fopen("Authentication.txt", "r");
-    if (fp == NULL)
-        exit(EXIT_FAILURE);
-
-    puts(username);
-    puts(password);
-
-    r = fscanf(fp, "%s %s", fuser, fpass);
-    while (r != EOF) {
-        r = fscanf(fp, "%s %s\n", fuser, fpass);
-        printf("%s %s\n", fuser, fpass);
-
-        if (equals(lowercase(fuser), lowercase(username)) &&
-                equals(fpass, password)) {
-            Connection_write(in->_sock, _prepare_msg(3, "login", "1", fuser));
+    void **pair;
+    for (i = 0; i < control->auth->count; i++) {
+        pair = List_get(control->auth, i);
+        if (equals(lowercase(username), lowercase(pair[0])) && equals(password, pair[1])) {
             puts("Login Success");
             return;
         }
     }
-    puts("Login Fail");
-    //send login failure
+    puts("Login Failed");
 }
 
-char **_get_words(char *string, int *count) {
+char **_get_words(char *string, int *count, char *split) {
     char **words = malloc(0), *word;
-    int i = 0, x = 0, len = strlen(string), cur_len, has_found;
+    int i = 0, x = 0, y, len = strlen(string), cur_len, has_found, cond, cond_len = strlen(split);
 
     while (x < len) {
         cur_len = 0;
@@ -56,7 +40,14 @@ char **_get_words(char *string, int *count) {
         word = malloc(0);
 
         while (x < len) {
-            if (string[x] != ',') {
+            cond = 0;
+            for (y = 0; y < cond_len; y++) {
+                if (string[x] == split[y]) {
+                    cond = 1;
+                    break;
+                }
+            }
+            if (!cond) {
                 has_found = 1;
                 cur_len += 1;
 
@@ -64,7 +55,7 @@ char **_get_words(char *string, int *count) {
                 word[cur_len - 1] = string[x];
             }
             x++;
-            if ((string[x] == ',' || x == len) && has_found == 1) {
+            if ((cond || x == len) && has_found == 1) {
                 break;
             }
         }

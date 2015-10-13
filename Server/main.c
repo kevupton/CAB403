@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <sys/unistd.h>
+#include <stdlib.h>
 #include "lib/control.h"
 
 int main(int argc, char *argv[]) {

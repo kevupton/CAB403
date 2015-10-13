@@ -14,6 +14,7 @@ Control *newControl(char *argv[]) {
     c->conn = newConnection(argv[1]);
     c->users = newList(sizeof(User *));
     c->instances = newList(sizeof(Instance*));
+    c->auth = newList((2*sizeof(char *)));
 
     _boot(c);
 
@@ -30,6 +31,7 @@ void _boot(Control *control) {
     }
 
     _start_worker(control);
+    _load_authentication(control);
 }
 
 void _start_worker(Control *control) {
@@ -53,3 +55,54 @@ void Controller_run() {
 
     }
 }
+
+void _load_authentication(Control *control) {
+    FILE *fp;
+    char *fuser, *fpass, buf[100];
+
+    fp = fopen("Authentication.txt", "r");
+    if (fp == NULL) {
+        puts("Unable to read Auth file");
+        exit(EXIT_FAILURE);
+    }
+
+    void **pair;
+
+    fgets(buf, sizeof buf, fp);
+    while (fgets(buf, sizeof buf, fp) != NULL) {
+        fuser = malloc(10 * sizeof(char));
+        fpass = malloc(10 * sizeof(char));
+
+        pair = malloc(2*sizeof(char*));
+        sscanf(buf, "%s %s", fuser, fpass);
+
+        pair[0] = fuser;
+        pair[1] = fpass;
+
+        List_add(control->auth, pair);
+    }
+
+    free(buf);
+
+    fclose(fp);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
