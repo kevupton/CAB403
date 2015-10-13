@@ -22,7 +22,6 @@ void Connection_close();
 void *Connection_listen();
 int Connection_send(char *msg);
 int Connection_login(char *username, char *password);
-char **_get_words(char *string, int *count);
 
 char *_prepare_msg(int len, ...);
 

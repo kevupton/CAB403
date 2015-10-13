@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/unistd.h>
 #include "control.h"
 
 
@@ -12,11 +13,13 @@ static const int MAX_PLAYERS = 10;
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));
     c->conn = newConnection(argv[1]);
-    c->users = newList(sizeof(User *));
-    c->instances = newList(sizeof(Instance*));
-    c->auth = newList((2*sizeof(char *)));
+    if (c->conn != NULL) {
+        c->users = newList(sizeof(User *));
+        c->instances = newList(sizeof(Instance*));
+        c->auth = newList((2*sizeof(char *)));
 
-    _boot(c);
+        _boot(c);
+    }
 
     return c;
 }
@@ -81,8 +84,6 @@ void _load_authentication(Control *control) {
 
         List_add(control->auth, pair);
     }
-
-    free(buf);
 
     fclose(fp);
 }

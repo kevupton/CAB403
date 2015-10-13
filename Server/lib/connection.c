@@ -8,7 +8,6 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/unistd.h>
-#include <pthread.h>
 #include <stdarg.h>
 #include "connection.h"
 
@@ -118,38 +117,9 @@ void *Connection_listen(void *connection) {
     }
 }
 
-int Connection_initialise(Connection *c) {
-
-
-    return 1;
-}
-
 void Connection_close(Connection *c) {
     //close(c->_sock);
 }
-
-//char **_read_msg(char *msg, int len) {
-//    int i, nb = len/DATA_SIZE, z, y;
-//    char **arr = malloc(nb * sizeof(char*));
-//
-//    for (i = 0; i < nb; i += 1) {
-//        y = i * DATA_SIZE;
-//        arr[i] = malloc(DATA_SIZE * sizeof(char));
-//        for (z = 0; z < DATA_SIZE && (z + y) < len; z += 1) {
-//            arr[i][z] = msg[z + y];
-//        }
-//
-//        for (z = DATA_SIZE - 1; z >= 0; z -= 1) {
-//            if (arr[i][z] == ' ' || arr[i][z] == '\n' || arr[i][z] == '\t') {
-//                arr[i][z] = '\0';
-//            } else {
-//                break;
-//            }
-//        }
-//    }
-//
-//    return arr;
-//}
 
 int Connection_write(int sock, char *msg) {
     return write(sock , msg , strlen(msg));

@@ -15,6 +15,8 @@ typedef struct Game Game;
 typedef struct Control {
     Game *game;
     Connection *conn;
+    volatile int keep_alive;
+    char *username;
 } Control;
 
 Control *newControl(char *argv[]);

@@ -12,44 +12,17 @@
 
 void Event_run(char **data, int len) {
     if (strcmp(data[0], "login") == 0) {
-        _event_login(data[1], data[2]);
+        _event_login(atoi(data[1]), data[2]);
     }
 }
 
-void _event_login(const char *username,const char *password) {
-    /* TODO */
-    FILE *fp;
-    char *line, **words;
-    size_t len;
-    ssize_t read;
-    int nb_words;
-    puts("logging in...");
-
-    fp = fopen("Authentication.txt", "r");
-    if (fp == NULL)
-        exit(EXIT_FAILURE);
-
-    puts(username);
-    puts(password);
-    read = getline(&line, &len, fp);
-    while ((read = getline(&line, &len, fp)) != -1) {
-        words = _get_words(line, &nb_words);
-
-        if (equals(lowercase(words[0]), lowercase(username)) &&
-                equals(words[1], password)) {
-            //send login success
-
-            return;
-        }
-    }
-
-    //send login failure
+void _event_login(const int success,const char *username) {
 
 }
 
-char **_get_words(char *string, int *count) {
+char **_get_words(char *string, int *count, char *split) {
     char **words = malloc(0), *word;
-    int i = 0, x = 0, len = strlen(string), cur_len, has_found;
+    int i = 0, x = 0, y, len = strlen(string), cur_len, has_found, cond, cond_len = strlen(split);
 
     while (x < len) {
         cur_len = 0;
@@ -57,7 +30,14 @@ char **_get_words(char *string, int *count) {
         word = malloc(0);
 
         while (x < len) {
-            if (string[x] != ',') {
+            cond = 0;
+            for (y = 0; y < cond_len; y++) {
+                if (string[x] == split[y]) {
+                    cond = 1;
+                    break;
+                }
+            }
+            if (!cond) {
                 has_found = 1;
                 cur_len += 1;
 
@@ -65,7 +45,7 @@ char **_get_words(char *string, int *count) {
                 word[cur_len - 1] = string[x];
             }
             x++;
-            if ((string[x] == ',' || x == len) && has_found == 1) {
+            if ((cond || x == len) && has_found == 1) {
                 break;
             }
         }

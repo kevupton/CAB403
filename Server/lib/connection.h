@@ -19,7 +19,6 @@ typedef struct Connection {
 } Connection;
 
 Connection *newConnection(char *port);
-int Connection_initialise(Connection *c);
 void Connection_close(Connection *c);
 void *Connection_listen(void *conn);
 int Connection_write(int sock, char *msg);

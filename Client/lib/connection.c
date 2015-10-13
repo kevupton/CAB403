@@ -67,20 +67,15 @@ void *Connection_listen() {
     int n = 0, nb_words;
     char server_reply[DATA_LENGTH];
 
-    while(1)
+    while(control->keep_alive)
     {
         memset(server_reply, 0, DATA_LENGTH);
 
         //Receive a reply from the server
         if((n = recv(control->conn->_sock , server_reply , DATA_LENGTH , 0)) <= 0)
         {
-            char **data = _get_words(server_reply, &nb_words);
+            char **data = _get_words(server_reply, &nb_words, ",");
             Event_run(data, nb_words);
-            /* TODO */
-            puts("Connection Closed");
-            Connection_close();
-            Control_exit();
-            break;
         }
         if (n != 0) {
             puts("Server reply :");

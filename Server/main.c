@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
         puts("Server requires a Port number");
     } else {
         control = newControl(argv);
-        sleep(300);
+        sleep(1000);
 //        int toget = 11;
 //
 //        User *kevin = newUser("kevin");
