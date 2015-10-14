@@ -1,18 +1,42 @@
-LIBS=Client/lib
+LIBS_CLI=Client/lib
+LIBS_SERV=Server/lib
 INCLUDE_PATH=libs/
+EXEC_FOLDER=bin/
 
-cli_exec: libraries
-	gcc Client/main.c $(wildcard libraries/*) -o cli_exec -lpthread
+all: clean serv_exec cli_exec
 
-libraries: 
-	mkdir libraries/
-	for dir in $(LIBS); do \
+serv_exec: serv_libraries
+	mkdir -p $(EXEC_FOLDER)
+	gcc Server/main.c $(wildcard libs/*) -o $(EXEC_FOLDER)/server -lpthread
+	make clean_serv
+
+cli_exec: cli_libraries
+	mkdir -p $(EXEC_FOLDER)
+	gcc Client/main.c $(wildcard libc/*) -o $(EXEC_FOLDER)/client -lpthread
+	make clean_cli
+
+cli_libraries: 
+	mkdir libc/
+	for dir in $(LIBS_CLI); do \
 		cd $$dir; \
 		gcc -c *.c; \
-		mv *.o ../../libraries; \
+		mv *.o ../../libc; \
 		cd -; \
 	done
 
-clean:
-	rm -rf libraries/	
+serv_libraries: 
+	mkdir libs/
+	for dir in $(LIBS_SERV); do \
+		cd $$dir; \
+		gcc -c *.c; \
+		mv *.o ../../libs; \
+		cd -; \
+	done
 
+clean: clean_serv clean_cli
+
+clean_serv:
+	rm -rf libs/
+
+clean_cli: 
+	rm -rf libc/

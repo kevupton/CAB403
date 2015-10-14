@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/unistd.h>
 #include <string.h>
 #include "control.h"
 
@@ -99,7 +98,7 @@ void _load_words(Control *control) {
 
     fp = fopen("hangman_text.txt", "r");
     if (fp == NULL) {
-        puts("Unable to read Auth file");
+        puts("Unable to read hangman_text.txt file");
         exit(EXIT_FAILURE);
     }
 

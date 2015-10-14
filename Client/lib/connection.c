@@ -34,7 +34,6 @@ Connection *newConnection(char *ip, char *port) {
         return NULL;
     }
     //puts("Socket created");
-
     server.sin_addr.s_addr = inet_addr(c->ip_address);
     server.sin_family = AF_INET;
     server.sin_port = htons( c->port ); //1134
