@@ -22,6 +22,7 @@ typedef struct Control {
     volatile int _game_setup;
     volatile int _game_guessing;
     volatile int _wait_leaderboard;
+    volatile int _connect_receieved;
 } Control;
 
 Control *newControl(char *argv[]);

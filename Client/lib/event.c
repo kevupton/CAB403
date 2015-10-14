@@ -21,19 +21,18 @@ void Event_run(char **data, int len) {
         _event_guess(atoi(data[1]), atoi(data[2]), data[3], data[4], data[5]);
     } else if (strcmp(key, "leaderboard") == 0) {
         _event_leaderboard(data);
-    } else if (strcmp(key, "connect")) {
-        if (atoi(data[1]) == 0) {
-            puts(data[2]);
-            puts("Exitting the program...");
-            Control_exit();
-        }
+    } else if (strcmp(key, "connect") == 0) {
+        _event_connect(atoi(data[1]), data[2]);
     }
+}
 
-//    int i;
-//    for (i = 0; i < len; i++) {
-//        free(data[i]);
-//    }
-//    free(data);
+void _event_connect(int success, char *msg) {
+    if (success == 0) {
+        puts(msg);
+        puts("Exitting the program...");
+        Control_exit();
+    }
+    control->_connect_receieved = 1;
 }
 
 void _event_leaderboard(char **data) {

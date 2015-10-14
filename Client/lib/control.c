@@ -9,6 +9,7 @@
 
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));
+    c->_connect_receieved = 0;
     c->conn = newConnection(argv[1], argv[2]);
     c->game = NULL;
     c->keep_alive = 1;

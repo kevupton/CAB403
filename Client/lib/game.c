@@ -34,6 +34,7 @@ void Free_game(Game **g) {
 
 void Game_initialise() {
     Game_welcome();
+    while (!control->_connect_receieved) { sleep(1); }
     Game_login();
     int input;
     Game_title();

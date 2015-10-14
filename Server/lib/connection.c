@@ -83,9 +83,8 @@ void *Connection_handler(void *i)
             }
             else if(read_size == -1)
             {
-                perror("recv failed");
+                puts("Client disconnected");
             }
-            puts("Connection Closed");
         }
         sleep(1);
     }
@@ -104,7 +103,7 @@ void *Connection_listen(void *connection) {
         if (i != NULL) {
             i->_sock = client_sock;
             i->in_use = 1;
-            Connection_write(client_sock, _prepare_msg(2, "connect", "1"));
+            Connection_write(client_sock, _prepare_msg(3, "connect", "1", ""));
         } else {
             Connection_write(client_sock, _prepare_msg(3, "connect", "0", "Too many users"));
             puts("Out of threads. Denying entry.");
