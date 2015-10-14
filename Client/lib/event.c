@@ -21,6 +21,12 @@ void Event_run(char **data, int len) {
         _event_guess(atoi(data[1]), atoi(data[2]), data[3], data[4], data[5]);
     } else if (strcmp(key, "leaderboard") == 0) {
         _event_leaderboard(data);
+    } else if (strcmp(key, "connect")) {
+        if (atoi(data[1]) == 0) {
+            puts(data[2]);
+            puts("Exitting the program...");
+            Control_exit();
+        }
     }
 
 //    int i;

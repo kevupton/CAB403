@@ -99,8 +99,7 @@ void *Connection_listen(void *connection) {
     c = sizeof(struct sockaddr_in);
     while( (client_sock = accept(conn->_sock, (struct sockaddr *)&client, (socklen_t*)&c)) )
     {
-        puts("Connection accepted");
-
+        puts("Client attempting connect...");
         Instance *i = Instance_get_available();
         if (i != NULL) {
             i->_sock = client_sock;
@@ -108,6 +107,7 @@ void *Connection_listen(void *connection) {
             Connection_write(client_sock, _prepare_msg(2, "connect", "1"));
         } else {
             Connection_write(client_sock, _prepare_msg(3, "connect", "0", "Too many users"));
+            puts("Out of threads. Denying entry.");
         }
     }
 
@@ -115,10 +115,6 @@ void *Connection_listen(void *connection) {
     {
         perror("accept failed");
     }
-}
-
-void Connection_close(Connection *c) {
-    //close(c->_sock);
 }
 
 void Connection_write(int sock, char *msg) {
