@@ -9,7 +9,7 @@
 #include "control.h"
 
 
-static const int MAX_PLAYERS = 10;
+const int MAX_PLAYERS = 10;
 
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));

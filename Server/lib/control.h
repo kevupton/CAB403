@@ -13,7 +13,7 @@
 #include "instance.h"
 #include "user.h"
 
-static const int MAX_PLAYERS;
+extern const int MAX_PLAYERS;
 
 typedef struct Connection Connection;
 typedef struct List List;

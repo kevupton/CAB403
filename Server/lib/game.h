@@ -11,7 +11,7 @@
 
 typedef struct Control Control;
 
-static const int LEADERBOARD_SHOW;
+extern const int LEADERBOARD_SHOW;
 
 typedef struct Game {
     char *guesses;

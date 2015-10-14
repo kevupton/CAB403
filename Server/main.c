@@ -12,6 +12,15 @@ int main(int argc, char *argv[]) {
         puts("Server requires a Port number");
     } else {
         control = newControl(argv);
+        User *u = User_login("Maolin");
+        u->played = 10;
+        u->won = 2;
+        _update_user(u);
+
+        User *m = User_login("Mike");
+        m->played = 4;
+        m->won = 4;
+        _update_user(m);
 
         if (control->conn) {
             Controller_run();

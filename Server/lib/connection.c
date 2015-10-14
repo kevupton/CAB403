@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include "connection.h"
 
-static const int DATA_LENGTH = 1000;
+const int DATA_LENGTH = 1000;
 
 Connection *newConnection(char *port) {
     Connection *conn = malloc(sizeof(Connection));

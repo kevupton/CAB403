@@ -13,9 +13,10 @@ Leaderboard *newLeaderboard(int start_from, int count) {
     l->played = malloc(count * sizeof(int));
     l->count = 0;
 
-    int i;
+    int i = 0;
+    User *u;
     for (i = 0; i < count && (i + start_from) < control->users->count; i++) {
-        User *u = control->users->items[i + start_from];
+        u = control->users->items[i + start_from];
         if (u->played >= 0) {
             l->names[i] = u->username;
             l->wins[i] = u->won;
@@ -87,16 +88,11 @@ int _get_sub_pos(const User *user, int pos) {
 
 void _update_user(User *user) {
     int pos = _get_score_pos(0, control->users->count - 1, user);
-    printf("pos = %d\n", pos);
     List_move(control->users, user, pos);
 }
 
 void Free_leaderboard(Leaderboard *l) {
     if (l != NULL) {
-        int i;
-        for (i = 0; i < l->count; i++) {
-            free(l->names[i]);
-        }
         free(l->names);
         free(l->played);
         free(l->wins);

@@ -8,7 +8,7 @@
 #include "game.h"
 #include "control.h"
 
-static const int LEADERBOARD_SHOW = 10;
+const int LEADERBOARD_SHOW = 10;
 
 Game *newGame(int *prev_index) {
     Game *g = malloc(sizeof(Game));

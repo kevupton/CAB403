@@ -74,13 +74,12 @@ void *Connection_listen() {
         //Receive a reply from the server
         if((n = recv(control->conn->_sock , server_reply , DATA_LENGTH , 0)) > 0)
         {
-            puts(server_reply);
             char **data = _get_words(server_reply, &nb_words, ",");
             Event_run(data, nb_words);
         }
-        if (n != 0) {
-//            puts("Server reply :");
-//            puts(server_reply);
+        if (n <= 0) {
+            puts("\n\nDisconnected from server...");
+            Control_exit();
         }
 
         sleep(1);

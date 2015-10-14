@@ -8,7 +8,7 @@
 #include "control.h"
 #include "instance.h"
 
-static const int DATA_LENGTH;
+extern const int DATA_LENGTH;
 
 typedef struct Instance Instance;
 
