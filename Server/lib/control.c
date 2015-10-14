@@ -30,6 +30,7 @@ void _boot(Control *control) {
 
     for (i = 0; i < MAX_PLAYERS; i++) {
         instance = newInstance();
+        instance->_thread_index = i;
         List_add(control->instances, instance);
     }
 
@@ -40,7 +41,7 @@ void _boot(Control *control) {
 
 void _start_worker(Control *control) {
     //Accept and incoming connection
-    puts("Waiting for incoming connections...");
+    puts("Waiting for incoming connections...\n");
 
     int *new_sock;
     pthread_t thread;

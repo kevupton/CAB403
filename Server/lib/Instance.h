@@ -19,6 +19,7 @@ typedef struct Instance {
     volatile int keep_alive;
 
     int prev_game_index;
+    int _thread_index;
 
     pthread_t _thread;
 } Instance;

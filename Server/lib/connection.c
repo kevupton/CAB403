@@ -74,17 +74,12 @@ void *Connection_handler(void *i)
 
                 memset(client_message, 0, DATA_LENGTH);
             }
-            Instance_reset(instance);
-
             if(read_size == 0)
             {
-                puts("Client disconnected");
                 fflush(stdout);
             }
-            else if(read_size == -1)
-            {
-                puts("Client disconnected");
-            }
+            printf("Client disconnected - Freeing thread %d\n", instance->_thread_index);
+            Instance_reset(instance);
         }
         sleep(1);
     }

@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "user.h"
 #include "control.h"
 
@@ -22,12 +23,17 @@ User *newUser(char *user) {
 User *User_find(char *username) {
     int i, len = control->users->count;
     User *u;
+    char *lower_a, *lower_b;
 
     for (i = 0; i < len; i++) {
         u = List_get(control->users, i);
-        if (equals(lowercase(u->username), lowercase(username))) {
+        lower_a = lowercase(u->username);
+        lower_b = lowercase(username);
+        if (strcmp(lower_a, lower_b)) {
             return u;
         }
+        free(lower_a);
+        free(lower_b);
     }
 
     return NULL;
