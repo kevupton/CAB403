@@ -1,45 +1,18 @@
-CC = cc
-CFLAGS = -Wall # Show all reasonable warnings
-LDFLAGS = 
+LIBS=Client/lib
+INCLUDE_PATH=libs/
 
+cli_exec: libraries
+	gcc Client/main.c $(wildcard libraries/*) -o cli_exec -lpthread
 
-all: hello
-
-hello: main.o factorial.o hello.o
-    g++ main.o factorial.o hello.o -o hello
-
-main.o: main.cpp
-    g++ -c main.cpp
-
-factorial.o: factorial.cpp
-    g++ -c factorial.cpp
-
-hello.o: hello.cpp
-    g++ -c hello.cpp
+libraries: 
+	mkdir libraries/
+	for dir in $(LIBS); do \
+		cd $$dir; \
+		gcc -c *.c; \
+		mv *.o ../../libraries; \
+		cd -; \
+	done
 
 clean:
-    rm *o hello
+	rm -rf libraries/	
 
-
-
-all: server client
-
-server: Server/main.o
-	${CC} -o server/server server/servercode.o
-
-servercode.o: server/servercode.c
-#	${CC} -c server/servercode.c
-
-
-client: client/clientcode.o
-	${CC} -o client/client client/clientcode.o
-
-clientcode.o: client/clientcode.c
-
-
-
-clean:
-	rm -f server/*.o server/server 
-	rm -f client/*.o  client/client
- 
-.PHONY: clean all

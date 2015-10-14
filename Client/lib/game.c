@@ -162,7 +162,7 @@ void _print_word() {
         x += 2;
     }
 
-    printf(str);
+    printf("%s", str);
 }
 
 void Game_guess(const char guess) {
