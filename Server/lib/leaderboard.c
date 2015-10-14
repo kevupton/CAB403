@@ -50,7 +50,7 @@ int _get_score_pos(const int high_pos, const int low_pos, const User *user) {
     } if (user->won == low->won) {
         return _get_sub_pos(user, low_pos);
     } else if (user->won < low->won) {
-        return -1;
+        return low_pos;
     } else {
         if (half_pos == high_pos) return low_pos;
         if (user->won > half->won) {

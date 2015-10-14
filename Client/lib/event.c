@@ -70,7 +70,6 @@ void _event_new_game(const int word_a, const int word_b, const int guesses) {
     control->_game_setup = 1;
     Free_game(&control->game);
     control->game = newGame(word_a, word_b, guesses);
-    puts("Created game");
 }
 
 void _event_login(const int success, char *msg) {

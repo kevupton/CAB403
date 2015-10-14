@@ -99,12 +99,10 @@ void Game_play_hangman() {
     Connection_play();
     while (!control->_game_setup) {sleep(1);}
     while (control->game->nb_left > 0 && control->game->status == -1) {
-        puts("start");
         _display_hangman();
         Game_guess(_get_guess());
         _display_line();
         while (control->_game_guessing) {sleep(1);}
-        puts("next");
     }
     _display_hangman();
     _display_results();
