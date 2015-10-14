@@ -1,1 +1,0 @@
-sudo mount -t vboxsf E:\Uni\CAB403\Assign ~/host
