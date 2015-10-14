@@ -143,7 +143,6 @@ char *_prepare_msg(int len, ...) {
 
     free(data);
 
-    puts(msg);
     return msg;
 }
 
