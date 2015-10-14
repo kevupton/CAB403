@@ -81,7 +81,7 @@ void _event_login(const int success, char *msg) {
     if (success) {
         control->username = msg;
     } else {
-        puts(msg);
+        printf("\n%s\n\n", msg);
         Control_exit();
     }
     control->_login_received = 1;
