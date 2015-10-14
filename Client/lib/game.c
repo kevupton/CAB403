@@ -71,10 +71,7 @@ void Game_login() {
     scanf("%s", password);
 
     Connection_login(username, password);
-
-    while (!control->_login_received) {
-        sleep(1);
-    }
+    while (!control->_login_received) {sleep(1);}
 }
 
 void Game_menu() {
@@ -100,13 +97,13 @@ int _menu_input() {
 void Game_play_hangman() {
     control->_game_setup = 0;
     Connection_play();
-    while (!control->_game_setup) { sleep(1); }
+    while (!control->_game_setup) {sleep(1);}
     while (control->game->nb_left > 0 && control->game->status == -1) {
         puts("start");
         _display_hangman();
         Game_guess(_get_guess());
         _display_line();
-        while (control->_game_guessing) { sleep(1); }
+        while (control->_game_guessing) {sleep(1);}
         puts("next");
     }
     _display_hangman();
@@ -116,8 +113,11 @@ void Game_play_hangman() {
 void Game_show_leaderboard() {
     control->_wait_leaderboard = 1;
     Connection_leaderboard();
-    while (control->_wait_leaderboard) { sleep(1); }
-
+    while (control->_wait_leaderboard) {sleep(1);}
+    int i;
+    for (i = control->leaderboard->count - 1; i >= 0; i--) {
+        _display_score(i);
+    }
 }
 
 void _display_hangman() {
@@ -181,4 +181,19 @@ void _display_results() {
     } else {
         printf("Bad luck %s! You have run out of guesses. The Hangman got you!\n", control->username);
     }
+}
+
+void _display_score(int i) {
+    __score_line();
+    printf("\n\nPlayer\t- %s\nNumber of games won  - %d\nNumber of games played  - %d\n\n",
+        control->leaderboard->names[i],
+        control->leaderboard->wins[i],
+        control->leaderboard->played[i]
+    );
+    __score_line();
+    printf("\n\n");
+}
+
+void __score_line() {
+    printf("=================================================");
 }

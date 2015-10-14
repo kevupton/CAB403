@@ -24,9 +24,29 @@ void Event_run(Instance *instance, char **data, int len) {
 }
 
 void _event_leaderboard(Instance *in) {
-    int start_form = 0, to_take = 10;
+    int start_from = 0, i = 0, x;
+    Leaderboard *l = newLeaderboard(start_from, LEADERBOARD_SHOW);
 
-    Leaderboard *l = newLeaderboard(start_form, to_take);
+    int data_len = l->count * 3;
+    char won[5], played[5], count[5];
+    char *data[data_len];
+
+    sprintf(count, "%d", l->count);
+
+    for (i = 0; i < l->count; i++) {
+        sprintf(won, "%d", l->wins[i]);
+        sprintf(played, "%d", l->wins[i]);
+
+        data[i * 3] = l->names[i];
+        data[i * 3 + 1] = played;
+        data[i * 3 + 2] = won;
+    }
+
+    Free_leaderboard(l);
+
+    //send the leaderboard back to the server
+    puts(_prepare_msg(3, "leaderboard", count, _concat_array(data_len, data, ",")));
+    Connection_write(in->_sock, _prepare_msg(3, "leaderboard", count, _concat_array(data_len, data, ",")));
 }
 
 void _event_check_guess(Instance *in, char guess) {
@@ -68,6 +88,7 @@ void _event_check_guess(Instance *in, char guess) {
         if (status != -1) {
             in->user->played++;
             in->user->won += status;
+            printf("%s %d %d\n", in->user->username, in->user->won, in->user->played);
             _update_user(in->user);
         }
 

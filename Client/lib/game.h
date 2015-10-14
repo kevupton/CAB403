@@ -40,7 +40,8 @@ char _get_guess();
 void _print_word();
 void _display_line();
 void _display_results();
-
+void _display_score(int i);
+void __score_line();
 void Game_guess(const char guess);
 
 #endif //HANGMAN_GAME_H

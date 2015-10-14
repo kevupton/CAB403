@@ -26,7 +26,7 @@ typedef struct Control {
 
 Control *newControl(char *argv[]);
 void Control_exit();
-
+void wait_for(int *_switch, int result);
 Control *control;
 
 #endif //HANGMAN_CONTROL_H

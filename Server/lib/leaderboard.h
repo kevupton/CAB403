@@ -16,6 +16,8 @@ typedef struct Leaderboard {
 } Leaderboard;
 
 Leaderboard *newLeaderboard(int start_from, int count);
+void Free_leaderboard(Leaderboard *l);
+
 int _get_score_pos(const int high_pos, const int low_pos, const User *user);
 int _get_sub_pos(const User *user, int pos);
 void _update_user(User *user);

@@ -7,9 +7,11 @@
 
 #include "control.h"
 
+
+
 typedef struct Control Control;
 
-static const int STARTING_GUESSES;
+static const int LEADERBOARD_SHOW;
 
 typedef struct Game {
     char *guesses;

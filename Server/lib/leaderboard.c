@@ -34,8 +34,13 @@ int _get_score_pos(const int high_pos, const int low_pos, const User *user) {
             *high = control->users->items[high_pos],
             *half = control->users->items[half_pos];
 
-    if (high == user) high = control->users->items[high_pos + 1];
-    if (low == user) low = control->users->items[low_pos - 1];
+    if (high_pos == low_pos) return high_pos;
+    if (high == user) {
+        high = control->users->items[high_pos + 1];
+    }
+    if (low == user) {
+        low = control->users->items[low_pos - 1];
+    }
 
     if (user->won > high->won) {
         return high_pos;
@@ -83,6 +88,18 @@ int _get_sub_pos(const User *user, int pos) {
 void _update_user(User *user) {
     int pos = _get_score_pos(0, control->users->count - 1, user);
     printf("pos = %d\n", pos);
-    List_move(NULL, user, pos);
+    List_move(control->users, user, pos);
 }
 
+void Free_leaderboard(Leaderboard *l) {
+    if (l != NULL) {
+        int i;
+        for (i = 0; i < l->count; i++) {
+            free(l->names[i]);
+        }
+        free(l->names);
+        free(l->played);
+        free(l->wins);
+        free(l);
+    }
+}

@@ -8,6 +8,8 @@
 #include "game.h"
 #include "control.h"
 
+static const int LEADERBOARD_SHOW = 10;
+
 Game *newGame(int *prev_index) {
     Game *g = malloc(sizeof(Game));
     int nb_left = 0;
@@ -26,6 +28,7 @@ Game *newGame(int *prev_index) {
 
     memset(g->visible[0], '_', (size_t) g->word_a);
     memset(g->visible[1], '_', (size_t) g->word_b);
+    memset(g->guesses, 0, (size_t) g->nb_left + 1);
 
     return g;
 }

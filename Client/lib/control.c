@@ -3,6 +3,7 @@
 //
 
 #include <stdio.h>
+#include <sys/unistd.h>
 #include "control.h"
 
 
@@ -17,4 +18,8 @@ Control *newControl(char *argv[]) {
 void Control_exit() {
     Connection_close();
     exit(0);
+}
+
+void wait_for(int *_switch, int result) {
+    while (*_switch != result) { sleep(1); }
 }

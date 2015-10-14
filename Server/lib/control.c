@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/unistd.h>
+#include <string.h>
 #include "control.h"
 
 
@@ -55,9 +56,11 @@ void _start_worker(Control *control) {
 }
 
 void Controller_run() {
-    while (1) {
-
-    }
+    char s[100];
+    do {
+        scanf("%s", s);
+    } while (strcmp(s, "exit") != 0);
+    puts("Exitting the application...");
 }
 
 void _load_authentication(Control *control) {

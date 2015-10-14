@@ -128,26 +128,47 @@ void Connection_write(int sock, char *msg) {
 }
 
 char *_prepare_msg(int len, ...) {
-    int i, z, t = 0;
-    char *msg = malloc(DATA_LENGTH * sizeof(char));
-    memset(msg, 0, DATA_LENGTH);
+    int i;
+    char **data = malloc(len * sizeof(char *));
 
     va_list args;
     va_start( args, len );
 
     for (i = 0; i < len; i++) {
-        char *arg = va_arg ( args, char* );
-        for (z = 0; z < strlen(arg); z++) {
-            msg[t] = arg[z];
-            t++;
-            if (i != len - 1 && z == strlen(arg) - 1) {
-                msg[t] = ',';
-                t++;
-            }
-        }
+        data[i] = va_arg ( args, char* );
     }
 
     va_end( args );
+
+    char *msg = _concat_array(len, data, ",");
+
+    free(data);
+
+    puts(msg);
+    return msg;
+}
+
+char *_concat_array(int len, char **data, char *join) {
+    int i, y, z, t = 0, str_len_i, len_join = (int) strlen(join);
+
+    char *msg = malloc(DATA_LENGTH * sizeof(char));
+    memset(msg, 0, DATA_LENGTH);
+
+    for (i = 0; i < len; i++) {
+        str_len_i = (int) strlen(data[i]);
+        for (z = 0; z < str_len_i; z++) {
+            if (data[i][z] == '\0') break;
+
+            msg[t] = data[i][z];
+            t++;
+            if (i != len - 1 && z == str_len_i - 1) {
+                for (y = 0; y < len_join; y++) {
+                    msg[t] = join[y];
+                    t++;
+                }
+            }
+        }
+    }
 
     return msg;
 }
