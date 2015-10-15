@@ -2,6 +2,7 @@
 // Created by Kevin on 10/10/2015.
 //
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,6 +23,7 @@ Control *newControl(char *argv[]) {
         c->words = newList(2*sizeof(char*));
         _boot(c);
     }
+    c->exit_signal = 0;
 
     return c;
 }
@@ -57,12 +59,14 @@ void _start_worker(Control *control) {
     control->_control_thread = thread;
 }
 
+void _signal_catcher(int sig) {
+    control->exit_signal = 1;
+}
+
 void Controller_run() {
-    char s[100];
-    do {
-        scanf("%s", s);
-    } while (strcmp(s, STOP_WORD) != 0);
-    puts("Exitting the application...");
+    signal(SIGINT, _signal_catcher);
+    while (!control->exit_signal) {sleep(1);}
+    puts("\nExitting the application...");
     Close_connections();
 }
 

@@ -25,6 +25,7 @@ typedef struct Control {
     List *auth;
     List *words;
     pthread_t _control_thread;
+    volatile int exit_signal;
 } Control;
 
 Control *newControl(char *argv[]);
@@ -35,6 +36,8 @@ void _boot(Control *control);
 void _start_worker(Control *control);
 void _load_authentication(Control *control);
 void _load_words(Control *control);
+void _signal_catcher(int sig);
+
 void Close_connections();
 
 #endif //HANGMAN_CONTROL_H
