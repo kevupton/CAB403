@@ -191,13 +191,18 @@ char **_get_words(char *string, int *count, char *split) {
 
 char *lowercase(const char *str) {
     int i = 0;
-    char *copy = malloc(sizeof(str));
+    size_t size = sizeof(str);
+    char *copy = malloc(size);
 
     while( str[i] )
     {
         copy[i] = tolower(str[i]);
         i++;
     }
+    if (i >= size) {
+        realloc(copy, size + 1);
+    }
+    copy[i] = '\0';
 
     return copy;
 }
