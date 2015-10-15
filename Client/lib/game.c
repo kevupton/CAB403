@@ -65,7 +65,7 @@ void Game_login() {
     char username[100], password[100];
     puts("You are required to logon with your registered Username and Password\n");
 
-    printf("Please enter your username-- >");
+    printf("Please enter your username-->");
     scanf("%s", username);
 
     printf("Please enter your password-->");

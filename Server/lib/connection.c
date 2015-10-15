@@ -17,7 +17,8 @@ Connection *newConnection(char *port) {
     Connection *conn = malloc(sizeof(Connection));
 
     struct sockaddr_in server ;
-
+    int setting = 1;
+    conn->keep_alive = 1;
     conn->port = atoi(port);
 
     if (conn->port == 0) {
@@ -27,6 +28,7 @@ Connection *newConnection(char *port) {
 
     //Create socket
     conn->_sock = socket(AF_INET , SOCK_STREAM , 0);
+    setsockopt(conn->_sock,SOL_SOCKET,SO_REUSEADDR,&setting,sizeof(int));
     if (conn->_sock == -1)
     {
         printf("Could not create socket");
@@ -62,49 +64,82 @@ void *Connection_handler(void *i)
     int read_size, nb_words;
     char client_message[DATA_LENGTH];
     Instance *instance = i;
+    fd_set rfds;
+    int retval;
+    int error = 0;
+    socklen_t len = sizeof (error);
+    char **data;
+
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
 
     while (instance->keep_alive) {
         if (instance->in_use) {
-            //Receive a message from client
-            printf("Client connected to thread %d\n", List_index(control->instances, instance));
-            while((read_size = recv(instance->_sock , client_message , DATA_LENGTH , 0)) > 0)
-            {
-                char **data = _get_words(client_message, &nb_words, ",");
-                Event_run(instance, data, nb_words);
+            FD_ZERO(&rfds);
+            FD_SET(instance->_sock, &rfds);
 
-                memset(client_message, 0, DATA_LENGTH);
+            retval = select(instance->_sock + 1, &rfds, NULL, NULL, &timeout);
+            if (retval > 0) {
+                read_size = recv(instance->_sock , client_message , DATA_LENGTH , 0);
+                if (read_size > 0) {
+                    data = _get_words(client_message, &nb_words, ",");
+                    Event_run(instance, data, nb_words);
+                    memset(client_message, 0, DATA_LENGTH);
+                }
             }
-            if(read_size == 0)
-            {
+            if (retval == -1 || (retval > 0 && read_size == 0)) {
                 fflush(stdout);
+                printf("Client disconnected - Freeing thread %d\n", instance->_thread_index);
+                Instance_reset(instance);
             }
-            printf("Client disconnected - Freeing thread %d\n", instance->_thread_index);
-            Instance_reset(instance);
+        } else {
+            if (instance->keep_alive) sleep(1);
         }
-        if (instance->keep_alive) sleep(1);
+    }
+    if (instance->in_use) {
+        fflush(stdout);
+        printf("Client disconnected - Freeing thread %d\n", instance->_thread_index);
+        Instance_reset(instance);
     }
 }
 
 void *Connection_listen(void *connection) {
     Connection *conn = connection;
-    int client_sock , c, val;
+    int client_sock , c, val, retval = 0, error = 0;
     struct sockaddr_in client;
-
+    struct timeval timeout;
+    fd_set rfds;
+    socklen_t err_len = sizeof(error);
     socklen_t len = sizeof(val);
+
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
 
     c = sizeof(struct sockaddr_in);
 
-    while((client_sock = accept(conn->_sock, (struct sockaddr *)&client, (socklen_t*)&c)) != -1)
-    {
-        puts("Client attempting connect...");
-        Instance *i = Instance_get_available();
-        if (i != NULL) {
-            i->_sock = client_sock;
-            i->in_use = 1;
-            Connection_write(client_sock, _prepare_msg(3, "connect", "1", ""));
-        } else {
-            Connection_write(client_sock, _prepare_msg(3, "connect", "0", "Too many users"));
-            puts("Out of threads. Denying entry.");
+    while (retval != -1) {
+        FD_ZERO(&rfds);
+        FD_SET(conn->_sock, &rfds);
+
+        retval = select(conn->_sock + 1, &rfds, NULL, NULL, &timeout);
+        if (retval > 0) {
+            client_sock = accept(conn->_sock, (struct sockaddr *)&client, (socklen_t*)&c);
+            if (client_sock != -1) {
+                puts("Client attempting connect...");
+                Instance *i = Instance_get_available();
+                if (i != NULL) {
+                    i->_sock = client_sock;
+                    i->in_use = 1;
+                    Connection_write(client_sock, _prepare_msg(3, "connect", "1", ""));
+                    printf("Client connected to thread %d\n", i->_thread_index);
+                } else {
+                    Connection_write(client_sock, _prepare_msg(3, "connect", "0", "Too many users"));
+                    puts("Out of threads. Denying entry.");
+                }
+            } else {
+                break;
+            }
         }
     }
 

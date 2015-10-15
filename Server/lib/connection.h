@@ -15,6 +15,7 @@ typedef struct Instance Instance;
 typedef struct Connection {
     int port;
     int _sock;
+    volatile int keep_alive;
 } Connection;
 
 Connection *newConnection(char *port);

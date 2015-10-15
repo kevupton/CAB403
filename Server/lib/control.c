@@ -134,9 +134,9 @@ void Close_connections() {
         in = List_get(control->instances, i);
         pthread_join(in->_thread, NULL);
     }
-
     close(control->conn->_sock);
     pthread_join(control->_control_thread, NULL);
+
     puts("\nGoodbye.\n");
 }
 
