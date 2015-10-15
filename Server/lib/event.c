@@ -126,22 +126,23 @@ void _event_new_game(Instance *in) {
 
 void _event_login(Instance *in, const char *username, const char *password) {
     int i;
-    char *lower_a, *lower_b;
+    char *lower_a = lowercase(username), *lower_b;
 
     void **pair;
     for (i = 0; i < control->auth->count; i++) {
         pair = List_get(control->auth, i);
-        lower_a = lowercase(username);
         lower_b = lowercase(pair[0]);
         if (strcmp(lower_a, lower_b) == 0
             && strcmp(password, pair[1]) == 0) {
             in->user = User_login(pair[0]);
             Connection_write(in->_sock, _prepare_msg(3, "login", "1", pair[0]));
+            free(lower_a);
+            free(lower_b);
             return;
         }
-        free(lower_a);
         free(lower_b);
     }
+    free(lower_a);
     Connection_write(in->_sock, _prepare_msg(3, "login", "0", "You entered either an incorrect username or password - disconnecting"));
 }
 

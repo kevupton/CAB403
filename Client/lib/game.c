@@ -56,9 +56,9 @@ void Game_title() {
 }
 
 void Game_welcome() {
-    puts("================================\n\n"
+    puts("===========================================\n\n"
                  "Welcome to the Online Hangman Gaming System\n\n"
-                 "================================\n\n");
+                 "===========================================\n\n");
 }
 
 void Game_login() {
@@ -113,9 +113,13 @@ void Game_show_leaderboard() {
     control->_wait_leaderboard = 1;
     Connection_leaderboard();
     while (control->_wait_leaderboard) {sleep(1);}
-    int i;
-    for (i = control->leaderboard->count - 1; i >= 0; i--) {
-        _display_score(i);
+    if (control->leaderboard->count > 0) {
+        int i;
+        for (i = control->leaderboard->count - 1; i >= 0; i--) {
+            _display_score(i);
+        }
+    } else {
+        _empty_leaderboard();
     }
 }
 
@@ -130,7 +134,7 @@ void _display_hangman() {
 }
 
 void _display_line() {
-    puts("\n-----------------------------------------------\n\n");
+    puts("\n-----------------------------------------------");
 }
 
 char _get_guess() {
@@ -194,5 +198,12 @@ void _display_score(int i) {
 }
 
 void __score_line() {
-    printf("=================================================");
+    printf("==============================================================");
+}
+
+void _empty_leaderboard() {
+    __score_line();
+    puts("\n\nThere is no information currently stored in the Leader Board. Try again later\n");
+    __score_line();
+    puts("\n");
 }
