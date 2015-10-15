@@ -10,7 +10,7 @@
 
 
 const int MAX_PLAYERS = 10;
-const char *STOP_WORD = "STOP";
+const char *STOP_WORD = "stop";
 
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));
@@ -129,10 +129,6 @@ void Close_connections() {
         in = List_get(control->instances, i);
         in->keep_alive = 0;
         close(in->_sock);
-    }
-    for (i = 0; i < control->instances->count; i++) {
-        in = List_get(control->instances, i);
-        pthread_join(in->_thread, NULL);
     }
     close(control->conn->_sock);
     pthread_join(control->_control_thread, NULL);
