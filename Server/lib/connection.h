@@ -14,12 +14,10 @@ typedef struct Instance Instance;
 
 typedef struct Connection {
     int port;
-    pthread_t *active_threads;
     int _sock;
 } Connection;
 
 Connection *newConnection(char *port);
-void Connection_close(Connection *c);
 void *Connection_listen(void *conn);
 void Connection_write(int sock, char *msg);
 void *Connection_handler(void *socket_desc);

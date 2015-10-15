@@ -81,17 +81,20 @@ void *Connection_handler(void *i)
             printf("Client disconnected - Freeing thread %d\n", instance->_thread_index);
             Instance_reset(instance);
         }
-        sleep(1);
+        if (instance->keep_alive) sleep(1);
     }
 }
 
 void *Connection_listen(void *connection) {
     Connection *conn = connection;
-    int client_sock , c;
+    int client_sock , c, val;
     struct sockaddr_in client;
 
+    socklen_t len = sizeof(val);
+
     c = sizeof(struct sockaddr_in);
-    while( (client_sock = accept(conn->_sock, (struct sockaddr *)&client, (socklen_t*)&c)) )
+
+    while((client_sock = accept(conn->_sock, (struct sockaddr *)&client, (socklen_t*)&c)) != -1)
     {
         puts("Client attempting connect...");
         Instance *i = Instance_get_available();
@@ -105,10 +108,7 @@ void *Connection_listen(void *connection) {
         }
     }
 
-    if (client_sock < 0)
-    {
-        perror("accept failed");
-    }
+    puts("Connection close.");
 }
 
 void Connection_write(int sock, char *msg) {

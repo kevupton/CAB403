@@ -5,10 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/unistd.h>
 #include "control.h"
 
 
 const int MAX_PLAYERS = 10;
+const char *STOP_WORD = "STOP";
 
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));
@@ -59,8 +61,9 @@ void Controller_run() {
     char s[100];
     do {
         scanf("%s", s);
-    } while (strcmp(s, "exit") != 0);
+    } while (strcmp(s, STOP_WORD) != 0);
     puts("Exitting the application...");
+    Close_connections();
 }
 
 void _load_authentication(Control *control) {
@@ -119,7 +122,22 @@ void _load_words(Control *control) {
     fclose(fp);
 }
 
-
+void Close_connections() {
+    int i;
+    Instance *in;
+    for (i = 0; i < control->instances->count; i++) {
+        in = List_get(control->instances, i);
+        in->keep_alive = 0;
+        close(in->_sock);
+    }
+    for (i = 0; i < control->instances->count; i++) {
+        in = List_get(control->instances, i);
+        pthread_join(in->_thread, NULL);
+    }
+    close(control->conn->_sock);
+    pthread_join(control->_control_thread, NULL);
+    puts("\nGoodbye.\n");
+}
 
 
 

@@ -35,5 +35,6 @@ void _boot(Control *control);
 void _start_worker(Control *control);
 void _load_authentication(Control *control);
 void _load_words(Control *control);
+void Close_connections();
 
 #endif //HANGMAN_CONTROL_H
