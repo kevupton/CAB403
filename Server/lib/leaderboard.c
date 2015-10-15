@@ -17,7 +17,7 @@ Leaderboard *newLeaderboard(int start_from, int count) {
     User *u;
     for (i = 0; i < count && (i + start_from) < control->users->count; i++) {
         u = control->users->items[i + start_from];
-        if (u->played >= 0) {
+        if (u->played > 0) {
             l->names[i] = u->username;
             l->wins[i] = u->won;
             l->played[i] = u->played;
