@@ -108,7 +108,7 @@ void *Connection_listen(void *connection) {
         }
     }
 
-    puts("Connection close.");
+    puts("Connection closed.");
 }
 
 void Connection_write(int sock, char *msg) {

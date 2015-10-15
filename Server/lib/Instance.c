@@ -11,6 +11,7 @@ Instance *newInstance() {
     pthread_t sniffer_thread;
     i->game = NULL;
     i->user = NULL;
+    i->keep_alive = 1;
 
     Instance_reset(i);
 
@@ -45,6 +46,5 @@ void Instance_reset(Instance *i) {
     i->user = NULL;
     Free_game(&i->game);
     i->in_use = 0;
-    i->keep_alive = 1;
     i->prev_game_index = -1;
 }
