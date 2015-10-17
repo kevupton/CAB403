@@ -80,8 +80,6 @@ void *Connection_listen() {
             puts("\n\nDisconnected from server...");
             Control_exit();
         }
-
-        sleep(1);
     }
 }
 
@@ -95,7 +93,7 @@ void Connection_login(char *username, char *password) {
 }
 
 void Connection_play() {
-    Connection_send("newgame");
+    Connection_send(_prepare_msg(1, "newgame"));
 }
 
 char *_prepare_msg(int len, ...) {

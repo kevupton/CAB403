@@ -5,6 +5,7 @@
 #ifndef HANGMAN_CONTROL_H
 #define HANGMAN_CONTROL_H
 
+#include <semaphore.h>
 #include "game.h"
 #include "connection.h"
 #include "event.h"
@@ -17,17 +18,19 @@ typedef struct Control {
     Connection *conn;
     Leaderboard *leaderboard;
     volatile int keep_alive;
+    volatile int _do_wait;
+    volatile int _is_waiting;
+
     char *username;
-    volatile int _login_received;
-    volatile int _game_setup;
-    volatile int _game_guessing;
-    volatile int _wait_leaderboard;
-    volatile int _connect_receieved;
+
+    sem_t sem_listen;
 } Control;
 
 Control *newControl(char *argv[]);
 void Control_exit();
-void wait_for(int *_switch, int result);
+void wait();
+void stop_waiting();
+
 Control *control;
 
 #endif //HANGMAN_CONTROL_H

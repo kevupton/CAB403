@@ -18,13 +18,13 @@ Game *newGame(int *prev_index) {
     (*prev_index) = g->index;
     nb_left = (int) (strlen(g->words[0]) + strlen(g->words[1]) + 10);
     g->nb_left = (nb_left > 26)? 26: nb_left;
-    g->guesses = malloc((nb_left + 1) * sizeof(char));
+    g->guesses = calloc(sizeof(char), (size_t) (nb_left + 1));
     g->nb_guesses = 0;
     g->word_a = (int) strlen(g->words[0]);
     g->word_b = (int) strlen(g->words[1]);
     g->visible = malloc(2*sizeof(char*));
-    g->visible[0] = malloc(g->word_a * sizeof(char));
-    g->visible[1] = malloc(g->word_b * sizeof(char));
+    g->visible[0] = calloc(sizeof(char), (size_t) g->word_a + 1);
+    g->visible[1] = calloc(sizeof(char), (size_t) g->word_b + 1);
 
     memset(g->visible[0], '_', (size_t) g->word_a);
     memset(g->visible[1], '_', (size_t) g->word_b);

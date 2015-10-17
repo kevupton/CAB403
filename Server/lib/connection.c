@@ -79,6 +79,7 @@ void *Connection_handler(void *i)
             FD_ZERO(&rfds);
             FD_SET(instance->_sock, &rfds);
 
+            read_size = 0;
             retval = select(instance->_sock + 1, &rfds, NULL, NULL, &timeout);
             if (retval > 0) {
                 read_size = recv(instance->_sock , client_message , DATA_LENGTH , 0);
@@ -88,7 +89,7 @@ void *Connection_handler(void *i)
                     memset(client_message, 0, DATA_LENGTH);
                 }
             }
-            if (retval == -1 || (retval > 0 && read_size == 0)) {
+            if (retval == -1 || (retval > 0 && read_size <= 0)) {
                 fflush(stdout);
                 printf("Client disconnected - Freeing thread %d\n", instance->_thread_index);
                 Instance_reset(instance);

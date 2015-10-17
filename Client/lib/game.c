@@ -34,7 +34,7 @@ void Free_game(Game **g) {
 
 void Game_initialise() {
     Game_welcome();
-    while (!control->_connect_receieved) { sleep(1); }
+    wait();
     Game_login();
     int input;
     Game_title();
@@ -72,7 +72,7 @@ void Game_login() {
     scanf("%s", password);
 
     Connection_login(username, password);
-    while (!control->_login_received) {sleep(1);}
+    wait();
 }
 
 void Game_menu() {
@@ -96,23 +96,23 @@ int _menu_input() {
 }
 
 void Game_play_hangman() {
-    control->_game_setup = 0;
+    printf("Control do_way = %d\n", control->_do_wait);
     Connection_play();
-    while (!control->_game_setup) {sleep(1);}
+    printf("Control do_way = %d\n", control->_do_wait);
+    wait();
     while (control->game->nb_left > 0 && control->game->status == -1) {
         _display_hangman();
         Game_guess(_get_guess());
         _display_line();
-        while (control->_game_guessing) {sleep(1);}
+        wait();
     }
     _display_hangman();
     _display_results();
 }
 
 void Game_show_leaderboard() {
-    control->_wait_leaderboard = 1;
     Connection_leaderboard();
-    while (control->_wait_leaderboard) {sleep(1);}
+    wait();
     if (control->leaderboard->count > 0) {
         int i;
         for (i = control->leaderboard->count - 1; i >= 0; i--) {
@@ -139,16 +139,9 @@ void _display_line() {
 
 char _get_guess() {
     printf("Enter your guess - ");
-    char string[100], c;
-    int i = 0;
-    do {
-        scanf("%s", string);
-        while ((c = string[i])) {
-            if (c != ' ' && c != '\n' && c != '\t')
-                return c;
-            i++;
-        }
-    } while (1);
+    char c;
+    scanf(" %c", &c);
+    return c;
 }
 
 void _print_word() {
@@ -171,7 +164,6 @@ void _print_word() {
 }
 
 void Game_guess(const char guess) {
-    control->_game_guessing = 1;
     char c[1];
     sprintf(c, "%c", guess);
     Connection_send(_prepare_msg(2, "guess", c));

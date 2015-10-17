@@ -32,7 +32,7 @@ void _event_connect(int success, char *msg) {
         puts("Exitting the program...");
         Control_exit();
     }
-    control->_connect_receieved = 1;
+    stop_waiting();
 }
 
 void _event_leaderboard(char **data) {
@@ -46,8 +46,7 @@ void _event_leaderboard(char **data) {
         control->leaderboard->played[i] = atoi(data[z + 1]);
         control->leaderboard->wins[i] = atoi(data[z + 2]);
     }
-
-    control->_wait_leaderboard = 0;
+    stop_waiting();
 }
 
 void _event_guess(const int result, const int nb_left, const char *guesses, const char *word_a, const char *word_b) {
@@ -68,13 +67,13 @@ void _event_guess(const int result, const int nb_left, const char *guesses, cons
     }
 
     control->game->status = result;
-    control->_game_guessing = 0;
+    stop_waiting();
 }
 
 void _event_new_game(const int word_a, const int word_b, const int guesses) {
-    control->_game_setup = 1;
     Free_game(&control->game);
     control->game = newGame(word_a, word_b, guesses);
+    stop_waiting();
 }
 
 void _event_login(const int success, char *msg) {
@@ -84,7 +83,7 @@ void _event_login(const int success, char *msg) {
         printf("\n%s\n\n", msg);
         Control_exit();
     }
-    control->_login_received = 1;
+    stop_waiting();
 }
 
 char **_get_words(char *string, int *count, char *split) {

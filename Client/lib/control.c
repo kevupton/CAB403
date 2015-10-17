@@ -9,10 +9,13 @@
 
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));
-    c->_connect_receieved = 0;
+    c->_do_wait = 1;
+    c->_is_waiting = 0;
     c->conn = newConnection(argv[1], argv[2]);
     c->game = NULL;
     c->keep_alive = 1;
+    sem_init(&c->sem_listen, 0, 0);
+
     return c;
 }
 
@@ -21,6 +24,16 @@ void Control_exit() {
     exit(0);
 }
 
-void wait_for(int *_switch, int result) {
-    while (*_switch != result) { sleep(1); }
+void wait() {
+    if (control->_do_wait) {
+        control->_is_waiting = 1;
+        sem_wait(&control->sem_listen);
+        control->_is_waiting = 0;
+    }
+    control->_do_wait = 1;
+}
+
+void stop_waiting() {
+    if (!control->_is_waiting) control->_do_wait = 0;
+    sem_post(&control->sem_listen);
 }
