@@ -12,11 +12,13 @@
 #include "leaderboard.h"
 #include "instance.h"
 #include "user.h"
+#include "leaderworker.h"
 
 extern const int MAX_PLAYERS;
 
 typedef struct Connection Connection;
 typedef struct List List;
+typedef struct LeaderWorker LeaderWorker;
 
 typedef struct Control {
     Connection *conn;
@@ -24,8 +26,11 @@ typedef struct Control {
     List *instances;
     List *auth;
     List *words;
+
     pthread_t _control_thread;
     volatile int exit_signal;
+
+    LeaderWorker *leaderWorker;
 } Control;
 
 Control *newControl(char *argv[]);

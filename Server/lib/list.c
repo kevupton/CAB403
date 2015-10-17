@@ -11,7 +11,7 @@ void List_add(List *list, void *item) {
     if (List_index(list, item) != -1) {
         puts("User already exists");
     } else {
-        size_t new_size = list->count + 1;
+        size_t new_size = (size_t) list->count + 1;
         void **new_items = realloc(list->items, new_size * list->_type_size);
 
         if (new_items) {
@@ -76,4 +76,22 @@ void Free_list(List **list) {
         free((*list));
         (*list) = NULL;
     }
+}
+
+void **List_pop(List *list) {
+    if (list->count > 0) {
+        int i;
+        size_t new_length = (size_t) list->count - 1;
+
+        void **item = list->items[0];
+        for (i = 0; i < new_length; i++) {
+            list->items[i] = list->items[i + 1];
+        }
+
+        realloc(list->items, new_length * list->_type_size);
+        list->count--;
+
+        return item;
+    }
+    return NULL;
 }

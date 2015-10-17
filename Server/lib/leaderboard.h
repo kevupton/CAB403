@@ -15,6 +15,7 @@ typedef struct Leaderboard {
     int count;
 } Leaderboard;
 
+
 Leaderboard *newLeaderboard(int start_from, int count);
 void Free_leaderboard(Leaderboard *l);
 

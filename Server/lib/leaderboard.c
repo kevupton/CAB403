@@ -4,6 +4,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/unistd.h>
+#include <string.h>
 #include "leaderboard.h"
 
 Leaderboard *newLeaderboard(int start_from, int count) {

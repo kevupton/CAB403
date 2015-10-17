@@ -60,3 +60,7 @@ void Instance_assign(Instance *i, int client_sock) {
     i->in_use = 1;
     sem_post(&i->sem_listener);
 }
+
+void Instance_wake(Instance *i) {
+    sem_post(&i->sem_listener);
+}

@@ -5,7 +5,6 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/unistd.h>
 #include "control.h"
 
@@ -16,14 +15,17 @@ const char *STOP_WORD = "stop";
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));
     c->conn = newConnection(argv[1]);
+    c->exit_signal = 0;
+
     if (c->conn != NULL) {
         c->users = newList(sizeof(User *));
         c->instances = newList(sizeof(Instance*));
         c->auth = newList((2*sizeof(char *)));
         c->words = newList(2*sizeof(char*));
+        c->leaderWorker = newLeaderWorker();
+
         _boot(c);
     }
-    c->exit_signal = 0;
 
     return c;
 }
@@ -126,20 +128,24 @@ void _load_words(Control *control) {
     fclose(fp);
 }
 
+
 void Close_connections() {
     int i;
     Instance *in;
+
+    LeaderWorker_close();
+
     for (i = 0; i < control->instances->count; i++) {
         in = List_get(control->instances, i);
         in->keep_alive = 0;
         close(in->_sock);
-    }
-    for (i = 0; i < control->instances->count; i++) {
-        in = List_get(control->instances, i);
+        Instance_wake(in);
         pthread_join(in->_thread, NULL);
     }
+
     close(control->conn->_sock);
     pthread_join(control->_control_thread, NULL);
+    pthread_join(control->leaderWorker->_thread, NULL);
 
     puts("\nGoodbye.\n");
 }

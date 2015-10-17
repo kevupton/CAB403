@@ -90,9 +90,7 @@ void _event_check_guess(Instance *in, char guess) {
 
         int status = atoi(return_nb);
         if (status != -1) {
-            in->user->played++;
-            in->user->won += status;
-            _update_user(in->user);
+            Leaderboard_result(in->user, &status);
         }
 
         char nb_left[10];
