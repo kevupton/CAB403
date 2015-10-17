@@ -3,7 +3,6 @@
 //
 
 #include <stdio.h>
-#include <sys/unistd.h>
 #include "control.h"
 
 
@@ -25,15 +24,11 @@ void Control_exit() {
 }
 
 void wait() {
-    if (control->_do_wait) {
-        control->_is_waiting = 1;
-        sem_wait(&control->sem_listen);
-        control->_is_waiting = 0;
-    }
+    while (control->_do_wait) {sem_wait(&control->sem_listen);}
     control->_do_wait = 1;
 }
 
 void stop_waiting() {
-    if (!control->_is_waiting) control->_do_wait = 0;
+    control->_do_wait = 0;
     sem_post(&control->sem_listen);
 }

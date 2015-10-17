@@ -96,9 +96,7 @@ int _menu_input() {
 }
 
 void Game_play_hangman() {
-    printf("Control do_way = %d\n", control->_do_wait);
     Connection_play();
-    printf("Control do_way = %d\n", control->_do_wait);
     wait();
     while (control->game->nb_left > 0 && control->game->status == -1) {
         _display_hangman();

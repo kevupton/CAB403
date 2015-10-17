@@ -6,6 +6,7 @@
 #define SERVER_INSTANCE_H
 
 #include <pthread.h>
+#include <semaphore.h>
 #include "game.h"
 #include "user.h"
 
@@ -21,11 +22,14 @@ typedef struct Instance {
     int prev_game_index;
     int _thread_index;
 
+    sem_t sem_listener;
     pthread_t _thread;
 } Instance;
 
 Instance *newInstance();
 Instance *Instance_get_available();
 void Instance_reset(Instance *i);
-
+void Instance_sleep(Instance *i);
+void Instance_wake(Instance *i);
+void Instance_assign(Instance *i, int client_sock);
 #endif //SERVER_INSTANCE_H

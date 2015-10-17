@@ -95,7 +95,9 @@ void *Connection_handler(void *i)
                 Instance_reset(instance);
             }
         } else {
-            if (instance->keep_alive) sleep(1);
+            if (instance->keep_alive) {
+                Instance_sleep(instance);
+            };
         }
     }
     if (instance->in_use) {
@@ -130,8 +132,7 @@ void *Connection_listen(void *connection) {
                 puts("Client attempting connect...");
                 Instance *i = Instance_get_available();
                 if (i != NULL) {
-                    i->_sock = client_sock;
-                    i->in_use = 1;
+                    Instance_assign(i, client_sock);
                     Connection_write(client_sock, _prepare_msg(3, "connect", "1", ""));
                     printf("Client connected to thread %d\n", i->_thread_index);
                 } else {

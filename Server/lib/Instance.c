@@ -13,6 +13,8 @@ Instance *newInstance() {
     i->user = NULL;
     i->keep_alive = 1;
 
+    sem_init(&i->sem_listener, 0, 0);
+
     Instance_reset(i);
 
     if( pthread_create( &sniffer_thread , NULL ,  Connection_handler , i) < 0)
@@ -47,4 +49,14 @@ void Instance_reset(Instance *i) {
     Free_game(&i->game);
     i->in_use = 0;
     i->prev_game_index = -1;
+}
+
+void Instance_sleep(Instance *i) {
+    sem_wait(&i->sem_listener);
+}
+
+void Instance_assign(Instance *i, int client_sock) {
+    i->_sock = client_sock;
+    i->in_use = 1;
+    sem_post(&i->sem_listener);
 }
