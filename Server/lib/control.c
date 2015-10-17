@@ -10,7 +10,6 @@
 
 
 const int MAX_PLAYERS = 10;
-const char *STOP_WORD = "stop";
 
 Control *newControl(char *argv[]) {
     Control *c = malloc(sizeof(Control));

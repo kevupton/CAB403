@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "event.h"
-#include "connection.h"
 
 
 void Event_run(Instance *instance, char **data, int len) {

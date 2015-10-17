@@ -7,8 +7,6 @@
 
 #include "control.h"
 
-
-
 typedef struct Control Control;
 
 extern const int LEADERBOARD_SHOW;
