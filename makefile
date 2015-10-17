@@ -7,12 +7,12 @@ all: clean serv_exec cli_exec
 
 serv_exec: serv_libraries
 	mkdir -p $(EXEC_FOLDER)
-	gcc Server/main.c $(wildcard libs/*) -o $(EXEC_FOLDER)/server -lpthread
+	gcc Server/main.c $(wildcard libs/*) -o $(EXEC_FOLDER)/server -lpthread -static
 	make clean_serv
 
 cli_exec: cli_libraries
 	mkdir -p $(EXEC_FOLDER)
-	gcc Client/main.c $(wildcard libc/*) -o $(EXEC_FOLDER)/client -lpthread
+	gcc Client/main.c $(wildcard libc/*) -o $(EXEC_FOLDER)/client -lpthread -static
 	make clean_cli
 
 cli_libraries: 
