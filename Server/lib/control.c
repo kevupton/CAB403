@@ -143,21 +143,3 @@ void Close_connections() {
 
     puts("\nGoodbye.\n");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

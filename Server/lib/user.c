@@ -23,19 +23,19 @@ User *newUser(char *user) {
 User *User_find(char *username) {
     int i, len = control->users->count;
     User *u;
-    char *lower_a, *lower_b;
+    char *lower_a = lowercase(username), *lower_b;
 
     for (i = 0; i < len; i++) {
         u = List_get(control->users, i);
-        lower_a = lowercase(u->username);
-        lower_b = lowercase(username);
-        if (strcmp(lower_a, lower_b)) {
+        lower_b = lowercase(u->username);
+        if (strcmp(lower_a, lower_b) == 0) {
+            free(lower_a);
+            free(lower_b);
             return u;
         }
-        free(lower_a);
         free(lower_b);
     }
-
+    free(lower_a);
     return NULL;
 }
 

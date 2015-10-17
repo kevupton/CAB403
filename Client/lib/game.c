@@ -10,8 +10,8 @@
 Game *newGame(const int word_a, const int word_b, const int nb_guesses) {
     Game *g = malloc(sizeof(Game));
     g->words = malloc(2*sizeof(char*));
-    g->words[0] = calloc(sizeof(char), (size_t) word_a);
-    g->words[1] = calloc(sizeof(char), (size_t) word_b);
+    g->words[0] = calloc(sizeof(char), (size_t) word_a + 1);
+    g->words[1] = calloc(sizeof(char), (size_t) word_b + 1);
     g->nb_left = nb_guesses;
     g->guesses = calloc(sizeof(char), (size_t) (1 + nb_guesses));
     g->word_a = word_a;
