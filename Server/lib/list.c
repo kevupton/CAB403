@@ -88,8 +88,8 @@ void **List_pop(List *list) {
             list->items[i] = list->items[i + 1];
         }
 
-        realloc(list->items, new_length * list->_type_size);
         list->count--;
+        list->items = realloc(list->items, new_length * list->_type_size);
 
         return item;
     }
