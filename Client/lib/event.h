@@ -13,6 +13,4 @@ void _event_leaderboard(char **data);
 void _event_connect(int success, char *msg);
 
 char **_get_words(char *string, int *count, char *split);
-char *lowercase(const char *str);
-int equals(const char *a, const char *b);
 #endif //SERVER_EVENT_H

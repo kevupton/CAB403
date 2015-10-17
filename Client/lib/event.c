@@ -128,28 +128,3 @@ char **_get_words(char *string, int *count, char *split) {
     (*count) = i;
     return words;
 }
-
-char *lowercase(const char *str) {
-    int i = 0;
-    char *copy = malloc(sizeof(str));
-
-    while( str[i] )
-    {
-        copy[i] = tolower(str[i]);
-        i++;
-    }
-
-    return copy;
-}
-
-
-int equals(const char *a, const char *b) {
-    int i, len_a = strlen(a), len_b = strlen(b);
-
-    for (i = 0; i < len_a && i < len_b; i++) {
-        if (a[i] != b[i]) return 0;
-        if (a[i] == '\0' && b[i] == '\0') return 1;
-    }
-
-    return 1;
-}

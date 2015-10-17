@@ -145,7 +145,8 @@ char _get_guess() {
 void _print_word() {
     int i, x = 0, y = 0, len = 2*(control->game->word_a + control->game->word_b + 1);
     char str[len], *word_a = control->game->words[0], *word_b = control->game->words[1];
-    memset(str, ' ', (size_t) (len - 1));
+    memset(str, ' ', (size_t) len);
+    str[len - 1] = '\0';
 
     for (i = 0; i < control->game->word_a; i++) {
         str[x] = word_a[i] != '\0'? word_a[i]: '_';
