@@ -10,9 +10,6 @@ all: clean serv_exec cli_exec
 32: FLAGS= -m32
 32: serv_exec cli_exec
 
-test: 
-	echo $(FLAGS)
-
 serv_exec: serv_libraries
 	mkdir -p $(EXEC_FOLDER)
 	gcc Server/main.c $(wildcard libs/*) -o $(EXEC_FOLDER)/server -lpthread $(FLAGS)
