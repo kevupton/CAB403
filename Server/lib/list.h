@@ -21,7 +21,7 @@ int     List_index(List *list, void *item);
 void    List_move(List *list, void *item, int pos);
 void   *List_get(List *list, int index);
 void    Free_list(List **list);
-void  **List_pop(List *list);
+void * List_pop(List *list);
 
 List *newList(int type_size);
 
