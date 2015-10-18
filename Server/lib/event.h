@@ -15,5 +15,4 @@ void _event_leaderboard(Instance *in);
 
 char **_get_words(char *string, int *count, char *split);
 char *lowercase(const char *str);
-int equals(const char *a, const char *b);
 #endif //SERVER_EVENT_H

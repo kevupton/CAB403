@@ -70,14 +70,23 @@ void _event_leaderboard(Instance *in) {
     Free_leaderboard(l);
 }
 
+/**
+ * Check the guess with the specified instance.
+ * Sends the response data if of the guess, if the guess was allowed.
+ *
+ * @param in the associated instance
+ * @param guess the character of the guess.
+ */
 void _event_check_guess(Instance *in, char guess) {
-    if (in->game->nb_left > 0) {
+    if (in->game != NULL && in->game->nb_left > 0) { //if the guess is allowed
         int i;
         char *word_a = in->game->words[0];
         char *word_b = in->game->words[1];
         int word_a_comp = 1, word_b_comp = 1;
         guess = tolower(guess);
 
+        //check all of the first word characters.
+        //assigning the right characters to the visible word
         for (i = 0; i < in->game->word_a; i++) {
             if (tolower(word_a[i]) == guess) {
                 in->game->visible[0][i] = guess;
@@ -86,6 +95,8 @@ void _event_check_guess(Instance *in, char guess) {
                 word_a_comp = 0;
         }
 
+        //check all of the first word characters.
+        //assigning the right characters to the visible word
         for (i = 0; i < in->game->word_b; i++) {
             if (tolower(word_b[i]) == guess) {
                 in->game->visible[1][i] = guess;
@@ -94,22 +105,26 @@ void _event_check_guess(Instance *in, char guess) {
                 word_b_comp = 0;
         }
 
+        //append the guess to the list of guesses and increment
         in->game->guesses[in->game->nb_guesses] = guess;
         in->game->nb_guesses++;
         in->game->nb_left--;
 
+        //define the current stage of the game.
         char *return_nb = "-1";
-        if (word_a_comp && word_b_comp) {
+        if (word_a_comp && word_b_comp) { //game is won
             return_nb = "1";
-        } else if (in->game->nb_left == 0) {
+        } else if (in->game->nb_left == 0) { //game is lost
             return_nb = "0";
         }
 
+        //game end check.
         int status = atoi(return_nb);
-        if (status != -1) {
-            Leaderboard_result(in->user, &status);
+        if (status != -1) { //if the game is over.
+            Leaderboard_result(in->user, &status); //add to the leaderboard.
         }
 
+        //send the data back to the client in a readable format.
         char nb_left[10];
         sprintf(nb_left, "%d", in->game->nb_left);
         Connection_write(
@@ -127,10 +142,17 @@ void _event_check_guess(Instance *in, char guess) {
     }
 }
 
-void _event_new_game(Instance *in) {
-    Free_game(&in->game);
-    in->game = newGame(&in->prev_game_index);
 
+/**
+ * Create a new game for the specified instance.
+ *
+ * @param in the specified instance.
+ */
+void _event_new_game(Instance *in) {
+    Free_game(&in->game); //free the previous game.
+    in->game = newGame(&in->prev_game_index); //make a new game that wasn't the same as the last
+
+    //send the data back to the client, about the length of words and nb of guesses.
     char *str = malloc(DATA_LENGTH * sizeof(char));
     sprintf(str, "newgame,%d,%d,%d",
             (int) strlen(in->game->words[0]),
@@ -139,32 +161,56 @@ void _event_new_game(Instance *in) {
     Connection_write(in->_sock, str);
 }
 
+/**
+ * Attempts to log the user in, depending on whether or not
+ * their username password combination is correct.
+ *
+ * @param username the string username
+ * @param password the string password
+ */
 void _event_login(Instance *in, const char *username, const char *password) {
     int i;
     char *lower_a = lowercase(username), *lower_b;
 
     void **pair;
-    for (i = 0; i < control->auth->count; i++) {
+    for (i = 0; i < control->auth->count; i++) { //for each of the loaded authentication data
         pair = List_get(control->auth, i);
+        //convert both usernames to lowercase
         lower_b = lowercase(pair[0]);
         if (strcmp(lower_a, lower_b) == 0
-            && strcmp(password, pair[1]) == 0) {
+            && strcmp(password, pair[1]) == 0) { //if the usernames and passwords match
+
+            //log the user in and send a success message
             in->user = User_login(pair[0]);
             Connection_write(in->_sock, _prepare_msg(3, "login", "1", pair[0]));
+
+            //free the lowercase data
             free(lower_a);
             free(lower_b);
             return;
         }
+        //free the lowercase data
         free(lower_b);
     }
-    free(lower_a);
+    free(lower_a); //^^
+    //send a fail response
     Connection_write(in->_sock, _prepare_msg(3, "login", "0", "You entered either an incorrect username or password - disconnecting"));
 }
 
+/**
+ * Splits a string into an array of words around the given split string.
+ *
+ * @param string the string to split up
+ * @param count reference to the int to give the count to.
+ * @param split the split string to split on.
+ *
+ * @return char** the array of words split up
+ */
 char **_get_words(char *string, int *count, char *split) {
     char **words = malloc(0), *word;
     int i = 0, x = 0, y, len = strlen(string), cur_len, has_found, cond, cond_len = strlen(split);
 
+    //algorithm to split the string up
     while (x < len) {
         cur_len = 0;
         has_found = 0;
@@ -204,6 +250,12 @@ char **_get_words(char *string, int *count, char *split) {
     return words;
 }
 
+/**
+ * Changes the word to a lowercase word.
+ * But doesn't override the existing word.
+ *
+ * @param str the string to make lowercase
+ */
 char *lowercase(const char *str) {
     int i = 0;
     size_t size = sizeof(str);
@@ -220,16 +272,4 @@ char *lowercase(const char *str) {
     copy[i] = '\0';
 
     return copy;
-}
-
-
-int equals(const char *a, const char *b) {
-    int i, len_a = strlen(a), len_b = strlen(b);
-
-    for (i = 0; i < len_a && i < len_b; i++) {
-        if (a[i] != b[i]) return 0;
-        if (a[i] == '\0' && b[i] == '\0') return 1;
-    }
-
-    return 1;
 }
