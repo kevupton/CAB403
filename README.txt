@@ -1,6 +1,7 @@
-#### BUILDING ##############
 # navigate to the root directory with the make file in it
-# then run:
+
+#### BUILDING ##############
+# run:
 make all
 ############################
 
