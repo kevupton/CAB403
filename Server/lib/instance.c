@@ -4,7 +4,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "Instance.h"
+#include "instance.h"
 
 /**
  * Creates a new instance with its own thread and data associated.

@@ -5,7 +5,7 @@
 #ifndef SERVER_EVENT_H
 #define SERVER_EVENT_H
 
-#include "Instance.h"
+#include "instance.h"
 
 void Event_run(Instance *instance, char **data, int len);
 void _event_login(Instance *in, const char *username, const char *password);
