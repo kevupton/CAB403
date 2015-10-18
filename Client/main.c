@@ -10,11 +10,11 @@ int main(int argc, char *argv[]) {
         puts("Client requires an Ip address followed by a Port number");
     } else {
         control = newControl(argv);
-        if (control->conn != NULL) {
-            if (Connection_initialise()) {
+        if (control->conn != NULL) {  //if the connection is setup
+            if (Connection_initialise()) { //and the listener has been established
                 Game_initialise();
             } else {
-                puts("Failed to start thread");
+                puts("Failed to start listener");
             }
         }
     }

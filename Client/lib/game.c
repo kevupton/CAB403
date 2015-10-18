@@ -117,7 +117,10 @@ void Game_menu() {
 }
 
 /**
+ * Gets the menu input and returns it.
+ * Will keep going until the right menu input has been selected.
  *
+ * @return int
  */
 int _menu_input() {
     int input = 0;
@@ -131,12 +134,17 @@ int _menu_input() {
     return input;
 }
 
+/**
+ * Runs the play hangman interface until the game is either lost or won.
+ */
 void Game_play_hangman() {
     Connection_play();
     wait();
+
+    //while there are still guesses left or game hasnt ended then play the game
     while (control->game->nb_left > 0 && control->game->status == -1) {
         _display_hangman();
-        Game_guess(_get_guess());
+        Game_guess(_get_guess()); //send the guess to the server
         _display_line();
         wait();
     }
@@ -144,19 +152,25 @@ void Game_play_hangman() {
     _display_results();
 }
 
+/**
+ * Shows the leaderboard for the game client
+ */
 void Game_show_leaderboard() {
     Connection_leaderboard();
     wait();
-    if (control->leaderboard->count > 0) {
+    if (control->leaderboard->count > 0) { //if there are people in the leaderboard
         int i;
-        for (i = control->leaderboard->count - 1; i >= 0; i--) {
+        for (i = control->leaderboard->count - 1; i >= 0; i--) { //foreach leaderboard entry
             _display_score(i);
         }
-    } else {
+    } else { //else show empty leaderboard
         _empty_leaderboard();
     }
 }
 
+/**
+ * Displays the hangman text
+ */
 void _display_hangman() {
     printf("\n\nGuessed letters: %s\n\n"
                    "Number of guesses left: %d\n\n"
@@ -167,10 +181,16 @@ void _display_hangman() {
     printf("\n\n");
 }
 
+/**
+ * Displays the separating line
+ */
 void _display_line() {
     puts("\n-----------------------------------------------");
 }
 
+/**
+ * Gets the character from the input
+ */
 char _get_guess() {
     printf("Enter your guess - ");
     char c;
@@ -178,6 +198,9 @@ char _get_guess() {
     return c;
 }
 
+/**
+ * prints the hangman words with the spaces in between
+ */
 void _print_word() {
     int i, x = 0, y = 0, len = 2*(control->game->word_a + control->game->word_b + 1);
     char str[len], *word_a = control->game->words[0], *word_b = control->game->words[1];
@@ -198,21 +221,34 @@ void _print_word() {
     printf("%s", str);
 }
 
+/**
+ * Sends the guess to the server
+ *
+ * @param guess the guess to send to the server
+ */
 void Game_guess(const char guess) {
     char c[1];
     sprintf(c, "%c", guess);
     Connection_send(_prepare_msg(2, "guess", c));
 }
 
+/**
+ * Displays the results of the game.
+ */
 void _display_results() {
     puts("Game Over\n\n");
-    if (control->game->status == 1) {
+    if (control->game->status == 1) { //the player won
         printf("Well done %s! You won this round of Hangman!\n", control->username);
-    } else {
+    } else { //player lost
         printf("Bad luck %s! You have run out of guesses. The Hangman got you!\n", control->username);
     }
 }
 
+/**
+ * Displays the leaderboard score of a specific player
+ *
+ * @param i the index of the players score to display
+ */
 void _display_score(int i) {
     __score_line();
     printf("\n\nPlayer\t- %s\nNumber of games won  - %d\nNumber of games played  - %d\n\n",
@@ -224,10 +260,16 @@ void _display_score(int i) {
     printf("\n\n");
 }
 
+/**
+ * Prints the score seperating line
+ */
 void __score_line() {
     printf("==============================================================");
 }
 
+/**
+ * Displays the content for if there was an empty leaderboard
+ */
 void _empty_leaderboard() {
     __score_line();
     puts("\n\nThere is no information currently stored in the Leader Board. Try again later\n");
