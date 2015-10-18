@@ -14,12 +14,21 @@
 
 static const int DATA_LENGTH = 1000;
 
+/**
+ * Creates a new connection instance, attempting to connect to the specified
+ * port and socket.
+ *
+ * @param ip the ip address to connect.
+ * @param port the port number to connect to.
+ *
+ * @return Connection*
+ */
 Connection *newConnection(char *ip, char *port) {
     Connection *c = malloc(sizeof(Connection));
     c->ip_address = ip;
     c->port = atoi(port);
 
-    if (c->port == 0) {
+    if (c->port == 0) { //check if the port is valid
         puts("Invalid Port.");
         return NULL;
     }
@@ -29,7 +38,7 @@ Connection *newConnection(char *ip, char *port) {
     //Create socket
     c->_sock = socket(AF_INET , SOCK_STREAM , 0);
     if (c->_sock == -1)
-    {
+    { //validate socket connection
         printf("Could not create socket");
         return NULL;
     }
@@ -48,6 +57,11 @@ Connection *newConnection(char *ip, char *port) {
     return c;
 }
 
+/**
+ * Start the connection thread which handles the receiving of the server messages.
+ *
+ * @return int 1 on success or 0 on failure.
+ */
 int Connection_initialise() {
     if (pthread_create(&control->conn->listener, NULL, Connection_listen, control->conn)) {
         return 0;
@@ -55,19 +69,29 @@ int Connection_initialise() {
     return 1;
 }
 
+/**
+ * Closes the connection
+ */
 void Connection_close() {
     close(control->conn->_sock);
     control->conn = NULL;
 }
 
-void *Connection_listen() {
+/**
+ * The method for handling the server responses.
+ *
+ * @param p
+ *
+ * @return void*
+ */
+void *Connection_listen(void *p) {
     //begin the thread
     //keep communicating with server
     int n = 0, nb_words;
     char server_reply[DATA_LENGTH];
 
     while(control->keep_alive)
-    {
+    { //while the told to keep alive the connection
         memset(server_reply, 0, DATA_LENGTH);
 
         //Receive a reply from the server
@@ -75,28 +99,50 @@ void *Connection_listen() {
         {
             //puts(server_reply);
             char **data = _get_words(server_reply, &nb_words, ",");
-        Event_run(data, nb_words);
-    }
-        if (n <= 0) {
+            Event_run(data, nb_words);
+        }
+        if (n <= 0) { //if there was no response
             puts("\n\nDisconnected from server...");
             Control_exit();
         }
     }
 }
 
+/**
+ * Send some data to the server
+ *
+ * @param msg the msg to send to the server
+ */
 int Connection_send(char *msg) {
     //Send some data
     return send(control->conn->_sock , msg , strlen(msg) , 0);
 }
 
+/**
+ * Send a login message to the server
+ *
+ * @param username
+ * @param password
+ */
 void Connection_login(char *username, char *password) {
     Connection_send(_prepare_msg(3, "login", username, password));
 }
 
+/**
+ * Send the play request to the server
+ */
 void Connection_play() {
     Connection_send(_prepare_msg(1, "newgame"));
 }
 
+/**
+ * Prepares the message to be sent.
+ * Joins the list of strings to a string of DATA_LENGTH.
+ * Joins by ','.
+ *
+ * @param len the number of inputs
+ * @param ... the variable number of input strings.
+ */
 char *_prepare_msg(int len, ...) {
     int i, z, t = 0;
     char *msg = malloc(DATA_LENGTH * sizeof(char));
@@ -122,6 +168,9 @@ char *_prepare_msg(int len, ...) {
     return msg;
 }
 
+/**
+ * Sends the leaderboard request
+ */
 void Connection_leaderboard() {
     Connection_send(_prepare_msg(1, "leaderboard"));
 }

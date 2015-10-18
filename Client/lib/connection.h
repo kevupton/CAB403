@@ -19,7 +19,7 @@ typedef struct Connection {
 Connection *newConnection(char *ip, char *port);
 int Connection_initialise();
 void Connection_close();
-void *Connection_listen();
+void *Connection_listen(void *p);
 int Connection_send(char *msg);
 void Connection_login(char *username, char *password);
 void Connection_play();
