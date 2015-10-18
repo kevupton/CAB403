@@ -51,7 +51,7 @@ void List_move(List *list, void *item, int pos) {
     int index = List_index(list, item), len = list->count, i;
     void **items = list->items;
 
-    if (pos != index) {
+    if (pos != index && pos >= 0) {
         if (pos < index) {
             for (i = index; i > pos; i--) {
                 items[i] = items[i - 1];

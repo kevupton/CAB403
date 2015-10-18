@@ -3,7 +3,7 @@
 //
 
 #include <stdlib.h>
-#include <sys/unistd.h>
+#include <stdio.h>
 #include "leaderboard.h"
 
 Leaderboard *newLeaderboard(int start_from, int count) {
@@ -18,9 +18,9 @@ Leaderboard *newLeaderboard(int start_from, int count) {
     for (i = 0; i < count && (i + start_from) < control->users->count; i++) {
         u = control->users->items[i + start_from];
         if (u->played > 0) {
-            l->names[i] = u->username;
-            l->wins[i] = u->won;
-            l->played[i] = u->played;
+            l->names[l->count] = u->username;
+            l->wins[l->count] = u->won;
+            l->played[l->count] = u->played;
             l->count++;
         }
     }
@@ -42,6 +42,9 @@ int _get_score_pos(const int high_pos, const int low_pos, const User *user) {
     if (low == user) {
         low = control->users->items[low_pos - 1];
     }
+    if (half == user && half_pos != high_pos) {
+        half = control->users->items[half_pos - 1];
+    }
 
     if (user->won > high->won) {
         return high_pos;
@@ -50,7 +53,7 @@ int _get_score_pos(const int high_pos, const int low_pos, const User *user) {
     } if (user->won == low->won) {
         return _get_sub_pos(user, low_pos);
     } else if (user->won < low->won) {
-        return low_pos;
+        return -1;
     } else {
         if (half_pos == high_pos) return low_pos;
         if (user->won > half->won) {
@@ -69,18 +72,19 @@ int _get_sub_pos(const User *user, int pos) {
 
     x = pos;
     User *userx = (User *) items[x];
-    if (userx->played >= user->played) {
-        while (x >= 0 && userx->played >= user->played && userx->won == user->won) {
-            pos = x;
-            x--;
-        }
-    } else {
-        pos++;
-        x = pos;
-        while (x < control->users->count && userx->played < user->played && userx->won == user->won) {
-            pos = x;
-            x++;
-        }
+
+    while (x >= 0 && userx->played >= user->played && userx->won == user->won) {
+        pos = x;
+        x--;
+        userx = (User *) items[x];
+    }
+
+    x = pos;
+    userx = (User *) items[x];
+    while (x < control->users->count && userx->played < user->played && userx->won == user->won || userx == user) {
+        pos = x;
+        x++;
+        userx = (User *) items[x];
     }
 
     return pos;
