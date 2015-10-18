@@ -15,6 +15,8 @@
 #include "leaderworker.h"
 
 extern const int MAX_PLAYERS;
+extern const char *AUTHENTICATION_FILE;
+extern const char *HANGMAN_WORDS_FILE;
 
 typedef struct Connection Connection;
 typedef struct List List;

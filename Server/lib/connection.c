@@ -96,26 +96,29 @@ void *Connection_handler(void *i)
             //check to see if there is any information to receive
             read_size = 0;
             retval = select(instance->_sock + 1, &rfds, NULL, NULL, &timeout);
-            if (retval > 0) {
+            if (retval > 0) {  //if there is information to be received
+                //get the information
                 read_size = recv(instance->_sock , client_message , DATA_LENGTH , 0);
-                if (read_size > 0) {
+                if (read_size > 0) { //if there was content
                     data = _get_words(client_message, &nb_words, ",");
-                    Event_run(instance, data, nb_words);
+                    Event_run(instance, data, nb_words); //run the associated event
                     memset(client_message, 0, DATA_LENGTH);
                 }
             }
-            if (retval == -1 || (retval > 0 && read_size <= 0)) {
+            if (retval == -1 || (retval > 0 && read_size <= 0)) { //if there was a problem with the data received then reset
                 fflush(stdout);
                 printf("Client disconnected - Freeing thread %d\n", instance->_thread_index);
                 Instance_reset(instance);
             }
         } else {
+            //if the instance is supposed to keep running, then put it to sleep,
+            //and wait for a connection
             if (instance->keep_alive) {
                 Instance_sleep(instance);
             };
         }
     }
-    if (instance->in_use) {
+    if (instance->in_use) { //free the memory
         fflush(stdout);
         printf("Client disconnected - Freeing thread %d\n", instance->_thread_index);
         Instance_reset(instance);
@@ -145,25 +148,28 @@ void *Connection_listen(void *connection) {
 
     c = sizeof(struct sockaddr_in);
 
-    while (retval != -1) {
+    while (retval != -1) { //while there is a connection there
         FD_ZERO(&rfds);
         FD_SET(conn->_sock, &rfds);
 
+        //check if there is data to be received
         retval = select(conn->_sock + 1, &rfds, NULL, NULL, &timeout);
-        if (retval > 0) {
+        if (retval > 0) { //if there is data
+            //get the socket connection
             client_sock = accept(conn->_sock, (struct sockaddr *)&client, (socklen_t*)&c);
-            if (client_sock != -1) {
+            if (client_sock != -1) { //if the socket connection exists
                 puts("Client attempting connect...");
+                //get the next available instance to assign
                 Instance *i = Instance_get_available();
-                if (i != NULL) {
-                    Instance_assign(i, client_sock);
+                if (i != NULL) { //if there is an available instance
+                    Instance_assign(i, client_sock); //assign it to the current connection
                     Connection_write(client_sock, _prepare_msg(3, "connect", "1", ""));
                     printf("Client connected to thread %d\n", i->_thread_index);
-                } else {
+                } else { //else tell the user that there are no available connections
                     Connection_write(client_sock, _prepare_msg(3, "connect", "0", "Too many users"));
                     puts("Out of threads. Denying entry.");
                 }
-            } else {
+            } else { //else stop the thread.
                 break;
             }
         }
@@ -172,11 +178,25 @@ void *Connection_listen(void *connection) {
     puts("Connection closed.");
 }
 
+/**
+ * Writes the client attached to the socket, a specific message
+ *
+ * @param msg the message to send.
+ */
 void Connection_write(int sock, char *msg) {
     write(sock , msg , strlen(msg));
-    free(msg);
+    free(msg); //free the message being sent
 }
 
+/**
+ * Prepares a list of strings to be sent to client.
+ * Concatenates them with a comma and returns the result.
+ *
+ * @param len the number of strings in the arguments
+ * @param ... a variable number strings.
+ *
+ * @return char* returns the concatenated string.
+ */
 char *_prepare_msg(int len, ...) {
     int i;
     char **data = malloc(len * sizeof(char *));
@@ -184,6 +204,7 @@ char *_prepare_msg(int len, ...) {
     va_list args;
     va_start( args, len );
 
+    //create the array of strings.
     for (i = 0; i < len; i++) {
         data[i] = va_arg ( args, char* );
     }
@@ -197,12 +218,22 @@ char *_prepare_msg(int len, ...) {
     return msg;
 }
 
+/**
+ * Concatenate the specific array of strings.
+ *
+ * @param len the length of the array
+ * @param data the array of strings
+ * @param join the string to join the array
+ *
+ * @return the resulting string.
+ */
 char *_concat_array(int len, char **data, char *join) {
     int i, y, z, t = 0, str_len_i, len_join = (int) strlen(join);
 
     char *msg = malloc(DATA_LENGTH * sizeof(char));
     memset(msg, 0, DATA_LENGTH);
 
+    //concatenate the strings
     for (i = 0; i < len; i++) {
         str_len_i = (int) strlen(data[i]);
         for (z = 0; z < str_len_i; z++) {
