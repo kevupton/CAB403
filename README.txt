@@ -1,7 +1,11 @@
+#### BUILDING ##############
 # navigate to the root directory with the make file in it
 # then run:
-
 make all
+############################
+
+
+######### RUNNING ##########
 
 # navigate to inside the bin directory:
 cd bin
@@ -17,7 +21,8 @@ cd bin
 
 # replacing {ip_address} with the ip address of the server and {port} with the port that it listens to.
 
+###########################
 
-==========================================
 
-# Worst case scenario download from github @: https://github.com/kevupton/CAB403/
+
+https://github.com/kevupton/CAB403/
