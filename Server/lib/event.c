@@ -8,23 +8,37 @@
 #include <string.h>
 #include "event.h"
 
-
+/**
+ * Method for handling the incoming messages.
+ * Takes the first param of the message and runs the given method with
+ * the received data.
+ *
+ * @param instance the thread instance
+ * @param data the received data from the message
+ * @param len the length of the data
+ */
 void Event_run(Instance *instance, char **data, int len) {
     char *key = data[0];
-    if (strcmp(key, "login") == 0) {
+    if (strcmp(key, "login") == 0) { //for authentication attempts
         _event_login(instance, data[1], data[2]);
-    } else if (strcmp(key, "newgame") == 0) {
+    } else if (strcmp(key, "newgame") == 0) { //for new game requests
         _event_new_game(instance);
-    } else if (strcmp(key, "guess") == 0) {
+    } else if (strcmp(key, "guess") == 0) { //for guess attempts
         _event_check_guess(instance, data[1][0]);
-    } else if (strcmp(key, "leaderboard") == 0) {
+    } else if (strcmp(key, "leaderboard") == 0) { //for requesting leaderboard.
         _event_leaderboard(instance);
     }
 }
 
+/**
+ * Gets the current leaderboard information and sends it to the
+ * specified client associated with the instance.
+ *
+ * @param in the instance containing the connection.
+ */
 void _event_leaderboard(Instance *in) {
     int start_from = 0, i = 0, x;
-    Leaderboard *l = newLeaderboard(start_from, LEADERBOARD_SHOW);
+    Leaderboard *l = newLeaderboard(start_from, LEADERBOARD_SHOW); //gets the current leaderboard data
 
     int data_len = l->count * 3;
     char count[5];
@@ -32,6 +46,7 @@ void _event_leaderboard(Instance *in) {
 
     sprintf(count, "%d", l->count);
 
+    //assign the leaderboard data to a string
     for (i = 0; i < l->count; i++) {
         played = malloc(5 * sizeof(char));
         won = malloc(5 * sizeof(char));
@@ -44,7 +59,10 @@ void _event_leaderboard(Instance *in) {
         data[i * 3 + 2] = won;
     }
 
+    //send the leaderboard data
     Connection_write(in->_sock, _prepare_msg(3, "leaderboard", count, _concat_array(data_len, data, ",")));
+
+    //free the string associated with sending the data.
     for (i = 0; i < l->count; i++) {
         free(data[i * 3 + 1]);
         free(data[i * 3 + 2]);
