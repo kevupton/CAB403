@@ -13,6 +13,13 @@
 
 const int DATA_LENGTH = 1000;
 
+/**
+ * Initialises the Connection class
+ *
+ * @param port the string port to assign the Connection to
+ *
+ * @return Connection* the instance of the Connection
+ */
 Connection *newConnection(char *port) {
     Connection *conn = malloc(sizeof(Connection));
 
@@ -47,7 +54,7 @@ Connection *newConnection(char *port) {
         perror("bind failed. Error");
         return NULL;
     }
-    puts("bind done");
+    printf("Bound to port: %d\n", conn->port);
 
     //Listen
     listen(conn->_sock , 3);
@@ -55,9 +62,15 @@ Connection *newConnection(char *port) {
     return conn;
 }
 
-/*
- * This will handle connection for each client
- * */
+/**
+ * Is the pthread method assigned to each Instance.
+ * Used to talk to the specific client, and handle each of their incoming requests.
+ * Is sleeping when there is nobody connected, and resets itself when someone disconnects.
+ *
+ * @param void
+ *
+ * @return void*
+ */
 void *Connection_handler(void *i)
 {
     //Get the socket descriptor
@@ -74,11 +87,13 @@ void *Connection_handler(void *i)
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
 
+    //do while the instance is told to keep going
     while (instance->keep_alive) {
         if (instance->in_use) {
             FD_ZERO(&rfds);
             FD_SET(instance->_sock, &rfds);
 
+            //check to see if there is any information to receive
             read_size = 0;
             retval = select(instance->_sock + 1, &rfds, NULL, NULL, &timeout);
             if (retval > 0) {
@@ -107,6 +122,15 @@ void *Connection_handler(void *i)
     }
 }
 
+/**
+ * Is the pthread method assigned to the Control worker.
+ * Used to handle the incoming connections, and assign each connection to a thread
+ * If it is available.
+ *
+ * @param void
+ *
+ * @return void*
+ */
 void *Connection_listen(void *connection) {
     Connection *conn = connection;
     int client_sock , c, val, retval = 0, error = 0;
