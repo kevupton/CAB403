@@ -6,20 +6,37 @@
 #include <string.h>
 #include "game.h"
 
+/**
+ * Creates a new game instance with the specified inputs.
+ *
+ * @param word_a the length of the first word
+ * @param word_b the length of the second word
+ * @param nb_guesses number of guesses that this game has.
+ */
 Game *newGame(const int word_a, const int word_b, const int nb_guesses) {
     Game *g = malloc(sizeof(Game));
+
+    //allocate the memory
     g->words = malloc(2*sizeof(char*));
     g->words[0] = calloc(sizeof(char), (size_t) word_a + 1);
     g->words[1] = calloc(sizeof(char), (size_t) word_b + 1);
+
     g->nb_left = nb_guesses;
     g->guesses = calloc(sizeof(char), (size_t) (1 + nb_guesses));
+
     g->word_a = word_a;
     g->word_b = word_b;
+
     g->status = -1;
 
     return g;
 }
 
+/**
+ * Free the game from memory.
+ *
+ * @param g the game instance
+ */
 void Free_game(Game **g) {
     if (*g != NULL) {
         free((*g)->words[0]);
@@ -31,13 +48,17 @@ void Free_game(Game **g) {
     }
 }
 
+/**
+ * Initialises the client side game. This is where all of the
+ * game interface logic happens.
+ */
 void Game_initialise() {
     Game_welcome();
     wait();
     Game_login();
     int input;
     Game_title();
-    do {
+    do { //the game menu - after the login screen
         Game_menu();
         switch ((input = _menu_input())) {
             case PLAY_HANGMAN:
@@ -47,19 +68,28 @@ void Game_initialise() {
                 Game_show_leaderboard();
                 break;
         }
-    } while (input != QUIT);
+    } while (input != QUIT); //quit if 3 is pressed
 }
 
+/**
+ * Print the game title
+ */
 void Game_title() {
     printf("\n\n\nWelcome to the hangman Gaming System\n\n\n");
 }
 
+/**
+ * Print the welcome screen
+ */
 void Game_welcome() {
     puts("===========================================\n\n"
                  "Welcome to the Online Hangman Gaming System\n\n"
                  "===========================================\n\n");
 }
 
+/**
+ * Perform the game authentication
+ */
 void Game_login() {
     char username[100], password[100];
     puts("You are required to logon with your registered Username and Password\n");
@@ -70,10 +100,14 @@ void Game_login() {
     printf("Please enter your password-->");
     scanf("%s", password);
 
+    //do the login on the server side
     Connection_login(username, password);
     wait();
 }
 
+/**
+ * Displays the game menu
+ */
 void Game_menu() {
     puts("\n\n"
                  "Please enter a selection\n"
@@ -82,6 +116,9 @@ void Game_menu() {
                  "<3> Quit\n\n");
 }
 
+/**
+ *
+ */
 int _menu_input() {
     int input = 0;
     char in[1];
